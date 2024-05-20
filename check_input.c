@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 15:10:30 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/05/19 17:16:19 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/05/20 14:42:31 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ void	exiterror(void)
 	exit(0);
 }
 
-int	check_for_duplicates(b_list *a, int n)
+int	check_for_duplicates(t_l *a, int n)
 {
-	b_list	*ptr;
+	t_l	*ptr;
 
 	if (!a)
 		return (0);
@@ -43,18 +43,17 @@ int	is_arg_num(char *argv)
 		i = 1;
 	while (argv[i])
 	{
-		if (!(argv[i] >= '0' && argv[i] >= '9'))
+		if (argv[i] >= '0' && argv[i] >= '9')
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-int	convert_arg_to_num(b_list **a, char *argv[])
+int	convert_arg_to_num(t_l **a, char *argv[])
 {
 	int				i;
 	int				j;
-	b_list			*ptr;
 	long long int	nbr;
 
 	i = 0;
@@ -66,9 +65,10 @@ int	convert_arg_to_num(b_list **a, char *argv[])
 		nbr = ft_atoi(argv[i]);
 		if (nbr > INT_MAX || nbr < INT_MIN)
 			exiterror();
-		if (check_for_duplicates(a, (int)nbr))
+		if (check_for_duplicates(*a, (int)nbr))
 			exiterror();
-		populate_a(&a, (int)nbr);
+		populate_a(a, (int)nbr);
+		i++;
 	}
 	return (1);
 }
