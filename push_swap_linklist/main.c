@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 15:02:13 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/05/20 15:09:56 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/05/20 17:58:17 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int	main(int argc, char *argv[])
 		temp = a;
 		ft_printf("Argument %d: %d\n", i, a->nbr);
 		a = temp->next;
+		i++;
 	}
 	return (0);
 }
