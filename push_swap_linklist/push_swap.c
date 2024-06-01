@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/05/31 21:00:18 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/01 18:56:39 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +18,28 @@ void	exit_error(void)
 	exit(0);
 }
 
-void	exit_error_free(t_l *tab)
+void	exit_error_free(t_l *stack)
 {
 	t_l	*tmp;
 
 	printf("Error\n");
-	while (tab)
+	while (stack)
 	{
-		tmp = tab;
-		tab = tab->next;
+		tmp = stack;
+		stack = stack->next;
 		free(tmp);
 	}
 	exit(0);
 }
 
-void	free_list(t_l *tab)
+void	free_list(t_l *list)
 {
 	t_l	*tmp;
 
-	while (tab)
+	while (list)
 	{
-		tmp = tab;
-		tab = tab->next;
+		tmp = list;
+		tab = list->next;
 		free(tmp);
 	}
 }
@@ -220,13 +220,122 @@ int	is_sorted(t_l **a)
 	}
 	return (1);
 }
+int	stack_size(t_l **stack)
+{
+	int	count;
+	t_l	*current;
+
+	count = 0;
+	current = *stack;
+	while (current)
+	{
+		count++;
+		current = current->next;
+	}
+	return (count);
+}
+
+void	two_elem_sort(t_l **a)
+{
+	t_l	*first;
+	t_l	*second;
+
+	first = *a;
+	second = first->next;
+	if (stack_size(a) == 1)
+		exit(0);
+	if (stack_size(a) == 2)
+	{
+		if (first->nbr > second->nbr)
+			ra(a);
+	}
+	exit(0);
+}
+
+void	three_elem_sort(t_l **a)
+{
+	t_l	*first;
+	t_l	*second;
+	t_l	*third;
+
+	first = *a;
+	second = first->next;
+	third = second->next;
+	if (first->nbr < third->nbr && third->nbr < second->nbr)
+	{
+		rra(a);
+		sa(a);
+	}
+	if (second->nbr < first->nbr && first->nbr < third->nbr)
+		sa(a);
+	if (second->nbr < third->nbr && third->nbr < first->nbr)
+		rra(a);
+	if (third->nbr < first->nbr && first->nbr < second->nbr)
+		ra(a);
+	if (third->nbr < second->nbr && second->nbr < first->nbr)
+	{
+		ra(a);
+		sa(a);
+	}
+}
+
+void	find_target(t_l **a_head, t_l **b_head)
+{
+	t_l	*a_node;
+	t_l	*closest;
+	int	min_diff;
+	t_l	*b_node;
+	int	diff;
+
+	a_node = *a_head;
+	while (a_node != NULL)
+	{
+		closest = NULL;
+		min_diff = INT_MAX;
+		b_node = *b_head;
+		while (b_node != NULL)
+		{
+			diff = b_node->nbr - a_node->nbr;
+			if (diff >= 0 && diff < min_diff)
+			{
+				min_diff = diff;
+				closest = b_node;
+			}
+			b_node = b_node->next;
+		}
+		a_node->target_node = closest->target_node;
+		a_node = a_node->next;
+	}
+}
+
+void	push_swap(t_l **a, t_l **b)
+{
+	
+}
+
+void	sizebased_operation(t_l **a, t_l **b)
+{
+	if (is_sorted(a))
+		exit(0);
+	if (stack_size(a) == 2)
+		two_elem_sort(a);
+	if (stack_size(a) == 3)
+		three_elem_sort(a);
+	if (stack_size(a) > 3)
+	{
+		pb(a);
+		if (stack_size(a) > 3)
+			pb(a);
+	}
+	push_swap(a, b);
+}
 
 int	main(int ac, char **av)
 {
-	t_l *a;
-	t_l *b;
-	t_l *ptr;
-	int i;
+	t_l	*a;
+	t_l	*b;
+	t_l	*ptr;
+	int	i;
 
 	i = 1;
 	a = NULL;
@@ -234,48 +343,25 @@ int	main(int ac, char **av)
 	if (ac == 1)
 		return (0);
 	else if (ac == 2)
-	{
 		ft_split(av, ' ', &a);
-		ptr = a;
-		while (ptr)
-		{
-			printf("Element %d: %d\n", i, ptr->nbr);
-			ptr = ptr->next;
-			i++;
-		}
-	}
 	else if (ac > 2)
-	{
 		handle_input(av, ac, &a);
-		ptr = a;
-		while (ptr)
-		{
-			printf("Element %d: %d\n", i, ptr->nbr);
-			ptr = ptr->next;
-			i++;
-		}
+	ptr = a;
+	while (ptr)
+	{
+		printf("Element %d: %d\n", i, ptr->nbr);
+		ptr = ptr->next;
+		i++;
 	}
-	//introduce sorting for 2, 3 & >3
+	// introduce sorting for 2, 3 & >3
+	push_swap(a);
 	free_list(a);
 	return (0);
 }
 
-
-// create sorting functions
-// break down split into more functions for norminette
-// create basic, fixed sort for 2 elements
-// create sort for 3 elements
-// -1 2 3 (is_sorted)
-// -1 3 2
-// -2 1 3
-// -2 3 1
-// -3 1 2
-// -3 2 1
-// push 2 elements from stack a to stack b if more than 3 elements in stack a
-
-// in structure introduce and undestand following elements 
-// -int index
-// -push_cost
-// -above_median
-// -cheapest
-// -*target_node
+// break down split to pass norminette
+// update node->index 
+// find median of a stack
+// determine whether its cheaper to push top or bottom
+// index should be push cost at the same time
+// figure out the logic for when operation on both stacks are simultanous
