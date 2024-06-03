@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/01 18:56:39 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/03 19:33:52 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,38 +279,149 @@ void	three_elem_sort(t_l **a)
 	}
 }
 
-void	find_target(t_l **a_head, t_l **b_head)
+t_l	*find_closest_node(t_l *a_node, t_l *b_head)
 {
-	t_l	*a_node;
 	t_l	*closest;
 	int	min_diff;
 	t_l	*b_node;
 	int	diff;
 
+	closest = NULL;
+	min_diff = INT_MAX;
+	b_node = b_head;
+	while (b_node != NULL)
+	{
+		diff = b_node->nbr - a_node->nbr;
+		if (diff >= 0 && diff < min_diff)
+		{
+			min_diff = diff;
+			closest = b_node;
+		}
+		b_node = b_node->next;
+	}
+	return (closest);
+}
+
+t_l	*find_max_node(t_l *b_head)
+{
+	t_l	*max_node;
+	t_l	*b_node;
+
+	max_node = NULL;
+	b_node = b_head;
+	while (b_node != NULL)
+	{
+		if (max_node == NULL || b_node->nbr > max_node->nbr)
+			max_node = b_node;
+		b_node = b_node->next;
+	}
+	return (max_node);
+}
+
+void	update_target_node(t_l **a_head, t_l **b_head)
+{
+	t_l	*a_node;
+	t_l	*closest;
+	t_l	*max_node;
+
 	a_node = *a_head;
 	while (a_node != NULL)
 	{
-		closest = NULL;
-		min_diff = INT_MAX;
-		b_node = *b_head;
-		while (b_node != NULL)
+		closest = find_closest_node(a_node, *b_head);
+		if (closest != NULL)
+			a_node->target_node = closest;
+		else
 		{
-			diff = b_node->nbr - a_node->nbr;
-			if (diff >= 0 && diff < min_diff)
-			{
-				min_diff = diff;
-				closest = b_node;
-			}
-			b_node = b_node->next;
+			max_node = find_max_node(*b_head);
+			a_node->target_node = max_node;
 		}
-		a_node->target_node = closest->target_node;
 		a_node = a_node->next;
+	}
+}
+
+void	update_index(t_l **stack)
+{
+	t_l	*current;
+	int	index;
+
+	current = *stack;
+	index = 0;
+	while (current != NULL)
+	{
+		current->index = index;
+		current = current->next;
+		index++;
+	}
+}
+
+void	update_median(t_l **stack)
+{
+	t_l	*current;
+	int	total_nodes;
+	int	index;
+	int	mid;
+
+	current = *stack;
+	total_nodes = 0;
+	while (current != NULL)
+	{
+		total_nodes++;
+		current = current->next;
+	}
+	current = *stack;
+	while (current != NULL)
+	{
+		index = current->index;
+		mid = total_nodes / 2;
+		if (index < mid)
+			current->median = 1;
+		else if (index > mid)
+			current->median = -1;
+		else
+			current->median = 0;
+		current = current->next;
+	}
+}
+
+// iterate through each node of stack a and it's target_node, then
+// calculate and update push_cost based on median and index of both 
+// node a and it's target_node in stack b
+
+void	push_cost_total(t_l **a, t_l **b)
+{
+	t_l	*current;
+	t_l	*target_node;
+	int	push_cost;
+
+	update_index(b);
+	update_median(b);
+	update_index(a);
+	update_median(a);
+	update_target_node(a, b);
+	current = *a;
+	while (current != NULL)
+	{
+		target_node = current->target_node;
+		if ((current->median == 1 && target_node->median == -1)
+			|| (current->median == -1 && target_node->median == -1))
+			push_cost = current->index + target_node->index;
+		else
+		{
+			if (current->index > target_node->index)
+				push_cost = current->index;
+			else
+				push_cost = target_node->index;
+		}
 	}
 }
 
 void	push_swap(t_l **a, t_l **b)
 {
-	
+	// calculate total push cost for values in stack a and stack b
+	// find the cheapest push cost
+	// execute the operations for the cheapest variables (print operations
+	//	+ execute operations)
+	// check if the stack is sorted
 }
 
 void	sizebased_operation(t_l **a, t_l **b)
@@ -353,15 +464,11 @@ int	main(int ac, char **av)
 		ptr = ptr->next;
 		i++;
 	}
-	// introduce sorting for 2, 3 & >3
-	push_swap(a);
+	sizebased_operation(a, b);
+	push_swap(a, b);
 	free_list(a);
 	return (0);
 }
 
 // break down split to pass norminette
-// update node->index 
-// find median of a stack
-// determine whether its cheaper to push top or bottom
-// index should be push cost at the same time
 // figure out the logic for when operation on both stacks are simultanous
