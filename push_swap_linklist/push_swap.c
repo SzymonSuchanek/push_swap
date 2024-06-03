@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/03 19:33:52 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/03 21:00:58 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,6 +220,7 @@ int	is_sorted(t_l **a)
 	}
 	return (1);
 }
+
 int	stack_size(t_l **stack)
 {
 	int	count;
@@ -383,27 +384,31 @@ void	update_median(t_l **stack)
 	}
 }
 
-// iterate through each node of stack a and it's target_node, then
-// calculate and update push_cost based on median and index of both 
-// node a and it's target_node in stack b
-
-void	push_cost_total(t_l **a, t_l **b)
+t_l	*push_cost_total(t_l **a, t_l **b)
 {
 	t_l	*current;
 	t_l	*target_node;
 	int	push_cost;
+	t_l	*min_node;
+	int	min_cost;
 
+	min_node = NULL;
+	min_cost = INT_MAX;
 	update_index(b);
 	update_median(b);
 	update_index(a);
 	update_median(a);
-	update_target_node(a, b);
+	update_target_nodes(a, b);
 	current = *a;
 	while (current != NULL)
 	{
 		target_node = current->target_node;
+		if (current->median == -1)
+			current->index = stack_size(a) - current->index;
+		if (target_node->median == -1)
+			target_node->index = stack_size(b) - target_node->index;
 		if ((current->median == 1 && target_node->median == -1)
-			|| (current->median == -1 && target_node->median == -1))
+			|| (current->median == -1 && target_node->median == 1))
 			push_cost = current->index + target_node->index;
 		else
 		{
@@ -412,15 +417,65 @@ void	push_cost_total(t_l **a, t_l **b)
 			else
 				push_cost = target_node->index;
 		}
+		current->push_cost = push_cost;
+		if (push_cost < min_cost)
+		{
+			min_cost = push_cost;
+			min_node = current;
+		}
+		current = current->next;
 	}
+	return (min_node);
 }
 
 void	push_swap(t_l **a, t_l **b)
 {
-	// calculate total push cost for values in stack a and stack b
-	// find the cheapest push cost
-	// execute the operations for the cheapest variables (print operations
-	//	+ execute operations)
+	t_l	*to_push_a;
+	t_l	*to_push_b;
+
+	to_push_a = push_cost_total(a, b);
+	to_push_b = to_push_a->target_node;
+	while (to_push_a->index != 0 && to_push_b != 0)
+	{
+		if (to_push_a->index > 0 && to_push_b->index > 0)
+		{
+			if ((to_push_a->median == 1 || to_push_a->median == 0) && (to_push_a->median == to_push_b->median))
+			{
+				rrr(a, b);
+				to_push_a->index--;
+				to_push_b->index--;
+			}
+			if (to_push_a->median == -1 && (to_push_a->median == to_push_b->median))
+			{
+				rr(a, b);
+				to_push_a->index--;
+				to_push_b->index--;
+			}
+		}
+		if (to_push_a->index > 0 && (to_push_a->median == 1 || to_push_a->median == 0))
+		{
+			ra(a);
+			to_push_a->index--;
+		}
+		if (to_push_b->index > 0 && (to_push_b->median == 1 || to_push_b->median == 0))
+		{
+			rb(b);
+			to_push_b->index--;
+		}
+		if (to_push_a->index > 0 && (to_push_a->median == -1 || to_push_a->median == 0))
+		{
+			rra(a);
+			to_push_a->index--;
+		}
+		if (to_push_b->index > 0 && (to_push_b->median == -1 || to_push_b->median == 0))
+		{
+			rrb(b);
+			to_push_b->index--;
+		}
+	}
+	// push node a to stack b
+	// redo the whole operation until stack_size(a) == 3
+	// push everything to stack a
 	// check if the stack is sorted
 }
 
