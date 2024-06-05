@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/03 21:00:58 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/05 18:03:09 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	free_list(t_l *list)
 	while (list)
 	{
 		tmp = list;
-		tab = list->next;
+		list = list->next;
 		free(tmp);
 	}
 }
@@ -384,99 +384,128 @@ void	update_median(t_l **stack)
 	}
 }
 
-t_l	*push_cost_total(t_l **a, t_l **b)
+void	update_variables(t_l **a, t_l **b)
 {
-	t_l	*current;
-	t_l	*target_node;
-	int	push_cost;
-	t_l	*min_node;
-	int	min_cost;
-
-	min_node = NULL;
-	min_cost = INT_MAX;
 	update_index(b);
 	update_median(b);
 	update_index(a);
 	update_median(a);
-	update_target_nodes(a, b);
-	current = *a;
+	update_target_node(a, b);
+}
+
+t_l	*find_min_push_cost(t_l *a, t_l *b, t_l **min_node)
+{
+	t_l	*current;
+	int	min_cost;
+	int	push_cost;
+
+	min_cost = INT_MAX;
+	current = a;
+	if (current == NULL)
+	{
+		*min_node = NULL;
+		return (NULL);
+	}
 	while (current != NULL)
 	{
-		target_node = current->target_node;
-		if (current->median == -1)
-			current->index = stack_size(a) - current->index;
-		if (target_node->median == -1)
-			target_node->index = stack_size(b) - target_node->index;
-		if ((current->median == 1 && target_node->median == -1)
-			|| (current->median == -1 && target_node->median == 1))
-			push_cost = current->index + target_node->index;
-		else
-		{
-			if (current->index > target_node->index)
-				push_cost = current->index;
-			else
-				push_cost = target_node->index;
-		}
-		current->push_cost = push_cost;
+		push_cost = get_push_cost(current, b);
 		if (push_cost < min_cost)
 		{
 			min_cost = push_cost;
-			min_node = current;
+			*min_node = current;
 		}
 		current = current->next;
 	}
+	return (find_min_push_cost(a->next, b, min_node));
+}
+
+int	get_push_cost(t_l *current, t_l *b)
+{
+	t_l	*target_node;
+
+	if (current->median == -1)
+		current->index = stack_size(&current) - current->index;
+	target_node = current->target_node;
+	if (target_node->median == -1)
+		target_node->index = stack_size(&b) - target_node->index;
+	if ((current->median == 1 && target_node->median == -1)
+		|| (current->median == -1 && target_node->median == 1))
+		return (current->index + target_node->index);
+	else
+	{
+		if (current->index > target_node->index)
+			return (current->index);
+		else
+			return (target_node->index);
+	}
+}
+
+t_l	*push_cost_total(t_l **a, t_l **b)
+{
+	t_l	*min_node;
+
+	update_variables(a, b);
+	min_node = NULL;
+	find_min_push_cost(*a, *b, &min_node);
 	return (min_node);
+}
+
+void	simultaneous_rotations(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
+{
+	if (push_a->index > 0 && push_b->index > 0
+		&& push_a->median == push_b->median)
+	{
+		if (push_a->median == 1 || push_a->median == 0)
+			rrr(a, b);
+		else if (push_a->median == -1)
+			rr(a, b);
+		push_a->index--;
+		push_b->index--;
+	}
+}
+
+void	individual_rotation_a(t_l **a, t_l *push_a)
+{
+	if (push_a->index > 0)
+	{
+		if (push_a->median == 1 || push_a->median == 0)
+			ra(a);
+		else if (push_a->median == -1 || push_a->median == 0)
+			rra(a);
+		push_a->index--;
+	}
+}
+
+void	individual_rotation_b(t_l **b, t_l *push_b)
+{
+	if (push_b->index > 0)
+	{
+		if (push_b->median == 1 || push_b->median == 0)
+			rb(b);
+		else if (push_b->median == -1 || push_b->median == 0)
+			rrb(b);
+		push_b->index--;
+	}
+}
+
+void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
+{
+	while (push_a->index != 0 && push_b->index != 0)
+	{
+		simultaneous_rotations(a, b, push_a, push_b);
+		individual_rotation_a(a, push_a);
+		individual_rotation_b(b, push_b);
+	}
 }
 
 void	push_swap(t_l **a, t_l **b)
 {
-	t_l	*to_push_a;
-	t_l	*to_push_b;
+	t_l	*push_a;
+	t_l	*push_b;
 
-	to_push_a = push_cost_total(a, b);
-	to_push_b = to_push_a->target_node;
-	while (to_push_a->index != 0 && to_push_b != 0)
-	{
-		if (to_push_a->index > 0 && to_push_b->index > 0)
-		{
-			if ((to_push_a->median == 1 || to_push_a->median == 0) && (to_push_a->median == to_push_b->median))
-			{
-				rrr(a, b);
-				to_push_a->index--;
-				to_push_b->index--;
-			}
-			if (to_push_a->median == -1 && (to_push_a->median == to_push_b->median))
-			{
-				rr(a, b);
-				to_push_a->index--;
-				to_push_b->index--;
-			}
-		}
-		if (to_push_a->index > 0 && (to_push_a->median == 1 || to_push_a->median == 0))
-		{
-			ra(a);
-			to_push_a->index--;
-		}
-		if (to_push_b->index > 0 && (to_push_b->median == 1 || to_push_b->median == 0))
-		{
-			rb(b);
-			to_push_b->index--;
-		}
-		if (to_push_a->index > 0 && (to_push_a->median == -1 || to_push_a->median == 0))
-		{
-			rra(a);
-			to_push_a->index--;
-		}
-		if (to_push_b->index > 0 && (to_push_b->median == -1 || to_push_b->median == 0))
-		{
-			rrb(b);
-			to_push_b->index--;
-		}
-	}
-	// push node a to stack b
-	// redo the whole operation until stack_size(a) == 3
-	// push everything to stack a
-	// check if the stack is sorted
+	push_a = push_cost_total(a, b);
+	push_b = push_a->target_node;
+	execute_push_swap_loop(a, b, push_a, push_b);
 }
 
 void	sizebased_operation(t_l **a, t_l **b)
@@ -489,11 +518,35 @@ void	sizebased_operation(t_l **a, t_l **b)
 		three_elem_sort(a);
 	if (stack_size(a) > 3)
 	{
-		pb(a);
+		pb(b, a);
 		if (stack_size(a) > 3)
-			pb(a);
+			pb(b, a);
 	}
-	push_swap(a, b);
+	if (!is_sorted(a))
+		actual_push_swap(a, b);
+}
+
+void	actual_push_swap(t_l **a, t_l **b)
+{
+	while (stack_size(a) > 3)
+	{
+		update_variables(a, b);
+
+		push_swap(a, b);
+		pb(a, b);
+		if (stack_size(a) == 3)
+		{
+			three_elem_sort(a);
+			while (stack_size(b) > 0)
+			{
+				update_variables(a, b);
+				push_swap(b, a);
+				pa(b, a);
+			}
+		}
+	}
+	if (stack_size(a) == 3 || is_sorted(a))
+		printf("Sorted");
 }
 
 int	main(int ac, char **av)
@@ -513,17 +566,13 @@ int	main(int ac, char **av)
 	else if (ac > 2)
 		handle_input(av, ac, &a);
 	ptr = a;
-	while (ptr)
-	{
-		printf("Element %d: %d\n", i, ptr->nbr);
-		ptr = ptr->next;
-		i++;
-	}
-	sizebased_operation(a, b);
-	push_swap(a, b);
+	// while (ptr)
+	// {
+	// 	printf("Element %d: %d\n", i, ptr->nbr);
+	// 	ptr = ptr->next;
+	// 	i++;
+	// }
+	sizebased_operation(&a, &b);
 	free_list(a);
 	return (0);
 }
-
-// break down split to pass norminette
-// figure out the logic for when operation on both stacks are simultanous
