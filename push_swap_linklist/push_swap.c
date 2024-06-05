@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/05 18:03:09 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/05 20:21:33 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,11 +386,18 @@ void	update_median(t_l **stack)
 
 void	update_variables(t_l **a, t_l **b)
 {
-	update_index(b);
-	update_median(b);
-	update_index(a);
-	update_median(a);
-	update_target_node(a, b);
+	if (stack_size(b) > 0)
+	{
+		update_index(b);
+		update_median(b);
+	}
+	if (stack_size(a) > 0)
+	{
+		update_index(a);
+		update_median(a);
+	}
+	if (stack_size(a) > 0 && stack_size(b) > 0)
+		update_target_node(a, b);
 }
 
 t_l	*find_min_push_cost(t_l *a, t_l *b, t_l **min_node)
@@ -416,7 +423,7 @@ t_l	*find_min_push_cost(t_l *a, t_l *b, t_l **min_node)
 		}
 		current = current->next;
 	}
-	return (find_min_push_cost(a->next, b, min_node));
+	return (*min_node);
 }
 
 int	get_push_cost(t_l *current, t_l *b)
@@ -508,6 +515,31 @@ void	push_swap(t_l **a, t_l **b)
 	execute_push_swap_loop(a, b, push_a, push_b);
 }
 
+void	actual_push_swap(t_l **a, t_l **b)
+{
+	while (stack_size(a) > 3)
+	{
+		update_variables(a, b);
+		push_swap(a, b);
+		pb(b, a);
+		printf("Elements left in stack B: %d\n", stack_size(a));
+		if (stack_size(a) == 3)
+		{
+			three_elem_sort(a);
+			while (stack_size(b) > 0)
+			{
+				update_variables(a, b);
+				push_swap(b, a);
+				pa(a, b);
+			}
+		}
+		if (stack_size(b) == 0)
+			break ;
+	}
+	if (stack_size(a) == 3 || is_sorted(a))
+		printf("Sorted");
+}
+
 void	sizebased_operation(t_l **a, t_l **b)
 {
 	if (is_sorted(a))
@@ -524,29 +556,6 @@ void	sizebased_operation(t_l **a, t_l **b)
 	}
 	if (!is_sorted(a))
 		actual_push_swap(a, b);
-}
-
-void	actual_push_swap(t_l **a, t_l **b)
-{
-	while (stack_size(a) > 3)
-	{
-		update_variables(a, b);
-
-		push_swap(a, b);
-		pb(a, b);
-		if (stack_size(a) == 3)
-		{
-			three_elem_sort(a);
-			while (stack_size(b) > 0)
-			{
-				update_variables(a, b);
-				push_swap(b, a);
-				pa(b, a);
-			}
-		}
-	}
-	if (stack_size(a) == 3 || is_sorted(a))
-		printf("Sorted");
 }
 
 int	main(int ac, char **av)
