@@ -6,194 +6,11 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/06 18:54:53 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/06 21:46:17 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
-
-void	sa(t_l **stack)
-{
-	t_l	*first;
-	t_l	*second;
-
-	if (!stack || !*stack || !(*stack)->next)
-		return ;
-	first = *stack;
-	second = first->next;
-	first->next = second->next;
-	if (second->next)
-		second->next->prev = first;
-	second->next = first;
-	second->prev = first->prev;
-	first->prev = second;
-	*stack = second;
-	// update to ft_printf
-	printf("sa\n");
-}
-
-void	sb(t_l **stack)
-{
-	t_l	*first;
-	t_l	*second;
-
-	if (!stack || !*stack || !(*stack)->next)
-		return ;
-	first = *stack;
-	second = first->next;
-	first->next = second->next;
-	if (second->next)
-		second->next->prev = first;
-	second->next = first;
-	second->prev = first->prev;
-	first->prev = second;
-	*stack = second;
-	// update to ft_printf
-	printf("sb\n");
-}
-
-void	ss(t_l **a, t_l **b)
-{
-	sa(a);
-	sa(b);
-}
-
-
-void	pa(t_l **b, t_l **a)
-{
-	t_l	*node_to_move;
-
-	if (!b || !*b)
-		return ;
-	node_to_move = *b;
-	*b = node_to_move->next;
-	if (*b)
-		(*b)->prev = NULL;
-	node_to_move->next = *a;
-	if (*a)
-		(*a)->prev = node_to_move;
-	node_to_move->prev = NULL;
-	*a = node_to_move;
-	// update to ft_printf
-	printf("pa\n");
-}
-
-void	pb(t_l **a, t_l **b)
-{
-	t_l	*node_to_move;
-
-	if (!b || !*b)
-		return ;
-	node_to_move = *b;
-	*b = node_to_move->next;
-	if (*b)
-		(*b)->prev = NULL;
-	node_to_move->next = *a;
-	if (*a)
-		(*a)->prev = node_to_move;
-	node_to_move->prev = NULL;
-	*a = node_to_move;
-	// update to ft_printf
-	printf("pb\n");
-}
-
-void	ra(t_l **a)
-{
-	t_l	*first;
-	t_l	*last;
-
-	if (!a || !*a || !(*a)->next)
-		return ;
-	first = *a;
-	last = *a;
-	first = *a;
-	last = *a;
-	while (last->next)
-		last = last->next;
-	*a = first->next;
-	(*a)->prev = NULL;
-	first->next = NULL;
-	first->prev = last;
-	last->next = first;
-	// update to ft_printf
-	printf("ra\n");
-}
-
-void	rb(t_l **b)
-{
-	t_l	*first;
-	t_l	*last;
-
-	if (!b || !*b || !(*b)->next)
-		return ;
-	first = *b;
-	last = *b;
-	first = *b;
-	last = *b;
-	while (last->next)
-		last = last->next;
-	*b = first->next;
-	(*b)->prev = NULL;
-	first->next = NULL;
-	first->prev = last;
-	last->next = first;
-	// update to ft_printf
-	printf("ra\n");
-}
-
-void	rr(t_l **a, t_l **b)
-{
-	ra(a);
-	rb(b);
-}
-
-void	rra(t_l **stack)
-{
-	t_l	*last;
-	t_l	*second_last;
-
-	if (!stack || !*stack || !(*stack)->next)
-		return ;
-	last = *stack;
-	while (last->next)
-		last = last->next;
-	second_last = last->prev;
-	second_last->next = NULL;
-	last->prev = NULL;
-	last->next = *stack;
-	(*stack)->prev = last;
-	*stack = last;
-	// update to ft_printf
-	printf("rra\n");
-}
-
-void	rrb(t_l **stack)
-{
-	t_l	*last;
-	t_l	*second_last;
-
-	if (!stack || !*stack || !(*stack)->next)
-		return ;
-	last = *stack;
-	while (last->next)
-		last = last->next;
-	second_last = last->prev;
-	second_last->next = NULL;
-	last->prev = NULL;
-	last->next = *stack;
-	(*stack)->prev = last;
-	*stack = last;
-	// update to ft_printf
-	printf("rrb\n");
-}
-
-void	rrr(t_l **a, t_l **b)
-{
-	rra(a);
-	rrb(b);
-}
-
-// del
 
 void	exit_error(void)
 {
@@ -386,11 +203,11 @@ void	handle_input(char **av, int ac, t_l **a)
 	}
 }
 
-int	is_sorted(t_l **a)
+int	is_sorted(t_l *a)
 {
 	t_l	*node;
 
-	node = *a;
+	node = a;
 	if (node == NULL || node->next == NULL)
 		return (1);
 	while (node->next != NULL)
@@ -404,13 +221,13 @@ int	is_sorted(t_l **a)
 	return (1);
 }
 
-int	stack_size(t_l **stack)
+int	stack_size(t_l *stack)
 {
 	int	count;
 	t_l	*current;
 
 	count = 0;
-	current = *stack;
+	current = stack;
 	while (current)
 	{
 		count++;
@@ -419,47 +236,47 @@ int	stack_size(t_l **stack)
 	return (count);
 }
 
-void	two_elem_sort(t_l **a)
+void	two_elem_sort(t_l *a)
 {
 	t_l	*first;
 	t_l	*second;
 
-	first = *a;
+	first = a;
 	second = first->next;
 	if (stack_size(a) == 1)
 		exit(0);
 	if (stack_size(a) == 2)
 	{
 		if (first->nbr > second->nbr)
-			ra(a);
+			ra(&a);
 	}
 	exit(0);
 }
 
-void	three_elem_sort(t_l **a)
+void	three_elem_sort(t_l *a)
 {
 	t_l	*first;
 	t_l	*second;
 	t_l	*third;
 
-	first = *a;
+	first = a;
 	second = first->next;
 	third = second->next;
 	if (first->nbr < third->nbr && third->nbr < second->nbr)
 	{
-		rra(a);
-		sa(a);
+		rra(&a);
+		sa(&a);
 	}
 	if (second->nbr < first->nbr && first->nbr < third->nbr)
-		sa(a);
+		sa(&a);
 	if (second->nbr < third->nbr && third->nbr < first->nbr)
-		rra(a);
+		rra(&a);
 	if (third->nbr < first->nbr && first->nbr < second->nbr)
-		ra(a);
+		ra(&a);
 	if (third->nbr < second->nbr && second->nbr < first->nbr)
 	{
-		ra(a);
-		sa(a);
+		ra(&a);
+		sa(&a);
 	}
 }
 
@@ -523,31 +340,31 @@ void	update_target_node(t_l **a_head, t_l **b_head)
 	}
 }
 
-void	update_index(t_l **stack)
+void	update_index(t_l *stack)
 {
 	t_l	*current;
 	int	index;
 
-	current = *stack;
+	current = stack;
 	index = 0;
 	while (current != NULL)
 	{
 		current->index = index;
+		printf("aaa%d\n", current->index);
 		current = current->next;
 		index++;
 	}
-	printf("A index: %d\n", (*stack)->index);
 }
 
-void	update_median(t_l **stack)
+void	update_median(t_l *stack)
 {
 	t_l	*current;
 	int	total_nodes;
 	int	index;
 	int	mid;
 
-	current = *stack;
-	total_nodes = stack_size(stack);
+	current = stack;
+	total_nodes = stack_size(current);
 	while (current != NULL)
 	{
 		index = current->index;
@@ -560,23 +377,25 @@ void	update_median(t_l **stack)
 			current->median = 0;
 		current = current->next;
 	}
-	current = *stack;
 }
 
-void	update_variables(t_l **a, t_l **b)
+void	update_variables(t_l *a, t_l *b)
 {
-	if (stack_size(b) > 0)
-	{
-		update_index(b);
-		update_median(b);
-	}
 	if (stack_size(a) > 0)
 	{
 		update_index(a);
 		update_median(a);
 	}
+	if (stack_size(b) > 0)
+	{
+		update_index(b);
+		printf("Index: %d, %d\n", a->index, b->index);
+		printf("Stack size: %d, %d\n", stack_size(a), stack_size(b));
+		printf("Median: %d, %d\n", a->median, b->median);
+		update_median(b);
+	}
 	if (stack_size(a) > 0 && stack_size(b) > 0)
-		update_target_node(a, b);
+		update_target_node(&a, &b);
 }
 
 t_l	*find_min_push_cost(t_l *a, t_l *b, t_l **min_node)
@@ -624,13 +443,14 @@ int	get_push_cost(t_l *current, t_l *b)
 	return (current->push_cost);
 }
 
-t_l	*push_cost_total(t_l **a, t_l **b)
+t_l	*push_cost_total(t_l *a, t_l *b)
 {
 	t_l	*min_node;
 
 	update_variables(a, b);
+	// printf("%d, %d\n", (*a)->index, (*b)->index);
 	min_node = NULL;
-	find_min_push_cost(*a, *b, &min_node);
+	find_min_push_cost(a, b, &min_node);
 	return (min_node);
 }
 
@@ -675,6 +495,7 @@ void	individual_rotation_b(t_l **b, t_l *push_b)
 
 void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
+	// printf("%d, %d\n", push_a->index, push_a->index);
 	while (push_a->index != 0 && push_b->index != 0)
 	{
 		simultaneous_rotations(a, b, push_a, push_b);
@@ -683,31 +504,30 @@ void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 	}
 }
 
-void	push_swap(t_l **a, t_l **b)
+void	push_swap(t_l *a, t_l *b)
 {
 	t_l	*push_a;
 	t_l	*push_b;
 
 	push_a = push_cost_total(a, b);
 	push_b = push_a->target_node;
-	execute_push_swap_loop(a, b, push_a, push_b);
+	// printf("%d, %d\n", push_a->index, push_a->index);
+	execute_push_swap_loop(&a, &b, push_a, push_b);
 }
 
-void	actual_push_swap(t_l **a, t_l **b)
+void	actual_push_swap(t_l *a, t_l *b)
 {
 	while (stack_size(a) > 3)
 	{
-		update_variables(a, b);
 		push_swap(a, b);
-		pb(b, a);
+		pb(&b, &a);
 		if (stack_size(a) == 3)
 		{
 			three_elem_sort(a);
 			while (stack_size(b) > 0)
 			{
-				update_variables(a, b);
 				push_swap(b, a);
-				pa(b, a);
+				pa(&b, &a);
 			}
 		}
 		if (stack_size(b) == 0)
@@ -717,7 +537,7 @@ void	actual_push_swap(t_l **a, t_l **b)
 		printf("Sorted");
 }
 
-void	sizebased_operation(t_l **a, t_l **b)
+void	sizebased_operation(t_l *a, t_l *b)
 {
 	if (is_sorted(a))
 		exit(0);
@@ -727,9 +547,9 @@ void	sizebased_operation(t_l **a, t_l **b)
 		three_elem_sort(a);
 	if (stack_size(a) > 3)
 	{
-		pb(b, a);
+		pb(&b, &a);
 		if (stack_size(a) > 3)
-			pb(b, a);
+			pb(&b, &a);
 	}
 	if (!is_sorted(a))
 		actual_push_swap(a, b);
@@ -758,7 +578,7 @@ int	main(int ac, char **av)
 	// 	ptr = ptr->next;
 	// 	i++;
 	// }
-	sizebased_operation(&a, &b);
+	sizebased_operation(a, b);
 	free_list(a);
 	return (0);
 }
