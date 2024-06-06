@@ -6,11 +6,194 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/05 20:21:33 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/06 18:54:53 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
+
+void	sa(t_l **stack)
+{
+	t_l	*first;
+	t_l	*second;
+
+	if (!stack || !*stack || !(*stack)->next)
+		return ;
+	first = *stack;
+	second = first->next;
+	first->next = second->next;
+	if (second->next)
+		second->next->prev = first;
+	second->next = first;
+	second->prev = first->prev;
+	first->prev = second;
+	*stack = second;
+	// update to ft_printf
+	printf("sa\n");
+}
+
+void	sb(t_l **stack)
+{
+	t_l	*first;
+	t_l	*second;
+
+	if (!stack || !*stack || !(*stack)->next)
+		return ;
+	first = *stack;
+	second = first->next;
+	first->next = second->next;
+	if (second->next)
+		second->next->prev = first;
+	second->next = first;
+	second->prev = first->prev;
+	first->prev = second;
+	*stack = second;
+	// update to ft_printf
+	printf("sb\n");
+}
+
+void	ss(t_l **a, t_l **b)
+{
+	sa(a);
+	sa(b);
+}
+
+
+void	pa(t_l **b, t_l **a)
+{
+	t_l	*node_to_move;
+
+	if (!b || !*b)
+		return ;
+	node_to_move = *b;
+	*b = node_to_move->next;
+	if (*b)
+		(*b)->prev = NULL;
+	node_to_move->next = *a;
+	if (*a)
+		(*a)->prev = node_to_move;
+	node_to_move->prev = NULL;
+	*a = node_to_move;
+	// update to ft_printf
+	printf("pa\n");
+}
+
+void	pb(t_l **a, t_l **b)
+{
+	t_l	*node_to_move;
+
+	if (!b || !*b)
+		return ;
+	node_to_move = *b;
+	*b = node_to_move->next;
+	if (*b)
+		(*b)->prev = NULL;
+	node_to_move->next = *a;
+	if (*a)
+		(*a)->prev = node_to_move;
+	node_to_move->prev = NULL;
+	*a = node_to_move;
+	// update to ft_printf
+	printf("pb\n");
+}
+
+void	ra(t_l **a)
+{
+	t_l	*first;
+	t_l	*last;
+
+	if (!a || !*a || !(*a)->next)
+		return ;
+	first = *a;
+	last = *a;
+	first = *a;
+	last = *a;
+	while (last->next)
+		last = last->next;
+	*a = first->next;
+	(*a)->prev = NULL;
+	first->next = NULL;
+	first->prev = last;
+	last->next = first;
+	// update to ft_printf
+	printf("ra\n");
+}
+
+void	rb(t_l **b)
+{
+	t_l	*first;
+	t_l	*last;
+
+	if (!b || !*b || !(*b)->next)
+		return ;
+	first = *b;
+	last = *b;
+	first = *b;
+	last = *b;
+	while (last->next)
+		last = last->next;
+	*b = first->next;
+	(*b)->prev = NULL;
+	first->next = NULL;
+	first->prev = last;
+	last->next = first;
+	// update to ft_printf
+	printf("ra\n");
+}
+
+void	rr(t_l **a, t_l **b)
+{
+	ra(a);
+	rb(b);
+}
+
+void	rra(t_l **stack)
+{
+	t_l	*last;
+	t_l	*second_last;
+
+	if (!stack || !*stack || !(*stack)->next)
+		return ;
+	last = *stack;
+	while (last->next)
+		last = last->next;
+	second_last = last->prev;
+	second_last->next = NULL;
+	last->prev = NULL;
+	last->next = *stack;
+	(*stack)->prev = last;
+	*stack = last;
+	// update to ft_printf
+	printf("rra\n");
+}
+
+void	rrb(t_l **stack)
+{
+	t_l	*last;
+	t_l	*second_last;
+
+	if (!stack || !*stack || !(*stack)->next)
+		return ;
+	last = *stack;
+	while (last->next)
+		last = last->next;
+	second_last = last->prev;
+	second_last->next = NULL;
+	last->prev = NULL;
+	last->next = *stack;
+	(*stack)->prev = last;
+	*stack = last;
+	// update to ft_printf
+	printf("rrb\n");
+}
+
+void	rrr(t_l **a, t_l **b)
+{
+	rra(a);
+	rrb(b);
+}
+
+// del
 
 void	exit_error(void)
 {
@@ -353,6 +536,7 @@ void	update_index(t_l **stack)
 		current = current->next;
 		index++;
 	}
+	printf("A index: %d\n", (*stack)->index);
 }
 
 void	update_median(t_l **stack)
@@ -363,13 +547,7 @@ void	update_median(t_l **stack)
 	int	mid;
 
 	current = *stack;
-	total_nodes = 0;
-	while (current != NULL)
-	{
-		total_nodes++;
-		current = current->next;
-	}
-	current = *stack;
+	total_nodes = stack_size(stack);
 	while (current != NULL)
 	{
 		index = current->index;
@@ -382,6 +560,7 @@ void	update_median(t_l **stack)
 			current->median = 0;
 		current = current->next;
 	}
+	current = *stack;
 }
 
 void	update_variables(t_l **a, t_l **b)
@@ -430,21 +609,19 @@ int	get_push_cost(t_l *current, t_l *b)
 {
 	t_l	*target_node;
 
-	if (current->median == -1)
-		current->index = stack_size(&current) - current->index;
 	target_node = current->target_node;
-	if (target_node->median == -1)
-		target_node->index = stack_size(&b) - target_node->index;
-	if ((current->median == 1 && target_node->median == -1)
-		|| (current->median == -1 && target_node->median == 1))
-		return (current->index + target_node->index);
-	else
+	if (current->median == 0 || target_node->median == 0)
 	{
 		if (current->index > target_node->index)
-			return (current->index);
+			current->push_cost = current->index;
 		else
-			return (target_node->index);
+			current->push_cost = target_node->index;
 	}
+	else
+	{
+		current->push_cost = current->index + target_node->index;
+	}
+	return (current->push_cost);
 }
 
 t_l	*push_cost_total(t_l **a, t_l **b)
@@ -459,7 +636,8 @@ t_l	*push_cost_total(t_l **a, t_l **b)
 
 void	simultaneous_rotations(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
-	if (push_a->index > 0 && push_b->index > 0
+	printf("test\n");
+	if ((push_a->index > 0 && push_b->index > 0)
 		&& push_a->median == push_b->median)
 	{
 		if (push_a->median == 1 || push_a->median == 0)
@@ -522,7 +700,6 @@ void	actual_push_swap(t_l **a, t_l **b)
 		update_variables(a, b);
 		push_swap(a, b);
 		pb(b, a);
-		printf("Elements left in stack B: %d\n", stack_size(a));
 		if (stack_size(a) == 3)
 		{
 			three_elem_sort(a);
@@ -530,7 +707,7 @@ void	actual_push_swap(t_l **a, t_l **b)
 			{
 				update_variables(a, b);
 				push_swap(b, a);
-				pa(a, b);
+				pa(b, a);
 			}
 		}
 		if (stack_size(b) == 0)
