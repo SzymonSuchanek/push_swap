@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:46:58 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/07 18:11:56 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/07 18:36:59 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,9 @@ int					stack_size(t_l *stack);
 void				two_elem_sort(t_l *a);
 t_l					*find_highest(t_l *stack);
 void				three_elem_sort(t_l **a);
-t_l					*find_closest_node(t_l *a_node, t_l *b_head);
+t_l					*find_closest_node(t_l *a, t_l *b);
 t_l					*find_max_node(t_l *b_head);
-void				update_target_node(t_l **a_head, t_l **b_head);
+void				update_target_node(t_l **a, t_l **b);
 void				update_index(t_l **stack);
 void				update_median(t_l **stack);
 void				update_variables(t_l *a, t_l *b);

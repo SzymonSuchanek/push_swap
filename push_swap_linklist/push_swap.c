@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/07 18:23:41 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/07 18:35:30 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,24 +325,24 @@ t_l	*find_max_node(t_l *b_head)
 	return (max_node);
 }
 
-void	update_target_node(t_l **a_head, t_l **b_head)
+void	update_target_node(t_l **a, t_l **b)
 {
-	t_l	*a_node;
+	t_l	*current;
 	t_l	*closest;
 	t_l	*max_node;
 
-	a_node = *a_head;
-	while (a_node != NULL)
+	current = *a;
+	while (current != NULL)
 	{
-		closest = find_closest_node(a_node, *b_head);
+		closest = find_closest_node(current, *b);
 		if (closest != NULL)
-			a_node->target_node = closest;
+			current->target_node = closest;
 		else
 		{
-			max_node = find_max_node(*b_head);
-			a_node->target_node = max_node;
+			max_node = find_max_node(*b);
+			current->target_node = max_node;
 		}
-		a_node = a_node->next;
+		current = current->next;
 	}
 }
 
@@ -356,7 +356,7 @@ void	update_index(t_l **stack)
 	while (current != NULL)
 	{
 		current->index = index;
-		// printf("%d\n", current->index);
+		// printf("%d ", current->index);
 		current = current->next;
 		index++;
 	}
@@ -513,7 +513,6 @@ void	push_swap(t_l *a, t_l *b)
 	t_l	*push_b;
 
 	push_a = push_cost_total(a, b);
-	printf("%d\n", push_a->push_cost);
 	push_b = push_a->target_node;
 	execute_push_swap_loop(&a, &b, push_a, push_b);
 }
