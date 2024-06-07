@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 14:08:29 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/01 14:28:57 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/07 14:46:32 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,46 +14,34 @@
 
 void	ra(t_l **a)
 {
-	t_l	*first;
 	t_l	*last;
 
-	if (!a || !*a || !(*a)->next)
+	if (!*a || !(*a)->next)
 		return ;
-	first = *a;
-	last = *a;
-	first = *a;
-	last = *a;
-	while (last->next)
-		last = last->next;
-	*a = first->next;
+	last = find_last_node(*a);
+	last->next = *a;
+	*a = (*a)->next;
 	(*a)->prev = NULL;
-	first->next = NULL;
-	first->prev = last;
-	last->next = first;
+	last->next->prev = last;
+	last->next->next = NULL;
 	// update to ft_printf
 	printf("ra\n");
 }
 
 void	rb(t_l **b)
 {
-	t_l	*first;
 	t_l	*last;
 
-	if (!b || !*b || !(*b)->next)
+	if (!*b || !(*b)->next)
 		return ;
-	first = *b;
-	last = *b;
-	first = *b;
-	last = *b;
-	while (last->next)
-		last = last->next;
-	*b = first->next;
+	last = find_last_node(*b);
+	last->next = *b;
+	*b = (*b)->next;
 	(*b)->prev = NULL;
-	first->next = NULL;
-	first->prev = last;
-	last->next = first;
+	last->next->prev = last;
+	last->next->next = NULL;
 	// update to ft_printf
-	printf("ra\n");
+	printf("rb\n");
 }
 
 void	rr(t_l **a, t_l **b)
