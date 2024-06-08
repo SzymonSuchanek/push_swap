@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/07 18:35:30 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/08 22:06:16 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,7 +356,6 @@ void	update_index(t_l **stack)
 	while (current != NULL)
 	{
 		current->index = index;
-		// printf("%d ", current->index);
 		current = current->next;
 		index++;
 	}
@@ -385,26 +384,24 @@ void	update_median(t_l **stack)
 	}
 }
 
-void	update_variables(t_l *a, t_l *b)
+void	update_variables(t_l **a, t_l **b)
 {
-	if (stack_size(a) > 0)
+	if (stack_size(*a) > 0)
 	{
-		update_index(&a);
-		update_median(&a);
+		update_index(a);
+		update_median(a);
 	}
-	if (stack_size(b) > 0)
+	if (stack_size(*b) > 0)
 	{
-		update_index(&b);
-		update_median(&b);
+		update_index(b);
+		update_median(b);
 	}
-	if (stack_size(a) > 0 && stack_size(b) > 0)
-		update_target_node(&a, &b);
-	// printf("Index: %d, %d\n", a->index, b->index);
-	// printf("Stack size: %d, %d\n", stack_size(a), stack_size(b));
-	// printf("Median: %d, %d\n", a->median, b->median);
+	if (stack_size(*a) > 0 && stack_size(*b) > 0)
+		update_target_node(a, b);
+	printf("%d, %d\n", stack_size(*a), stack_size(*b));
 }
 
-t_l	*find_min_push_cost(t_l *a, t_l *b, t_l **min_node)
+t_l	*find_min_push_cost(t_l *a, t_l **min_node)
 {
 	t_l	*current;
 	int	min_cost;
@@ -419,7 +416,7 @@ t_l	*find_min_push_cost(t_l *a, t_l *b, t_l **min_node)
 	}
 	while (current != NULL)
 	{
-		push_cost = get_push_cost(current, b);
+		push_cost = get_push_cost(current);
 		if (push_cost < min_cost)
 		{
 			min_cost = push_cost;
@@ -430,39 +427,36 @@ t_l	*find_min_push_cost(t_l *a, t_l *b, t_l **min_node)
 	return (*min_node);
 }
 
-int	get_push_cost(t_l *current, t_l *b)
+int	get_push_cost(t_l *current)
 {
 	t_l	*target_node;
 
 	target_node = current->target_node;
-	if (current->median == 0 || target_node->median == 0)
-	{
-		if (current->index > target_node->index)
-			current->push_cost = current->index;
-		else
-			current->push_cost = target_node->index;
-	}
+	if (current->median == -1)
+		current->push_cost = stack_size(current) - current->index;
 	else
-	{
-		current->push_cost = current->index + target_node->index;
-	}
-	return (current->push_cost);
+		current->push_cost = current->index;
+	if (target_node->median == -1)
+		target_node->push_cost = stack_size(target_node) - target_node->index;
+	else
+		target_node->push_cost = target_node->index;
+	return (current->push_cost + target_node->push_cost);
 }
 
 t_l	*push_cost_total(t_l *a, t_l *b)
 {
 	t_l	*min_node;
 
-	update_variables(a, b);
+	update_variables(&a, &b);
 	min_node = NULL;
-	find_min_push_cost(a, b, &min_node);
+	find_min_push_cost(a, &min_node);
 	return (min_node);
 }
 
 void	simultaneous_rotations(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
 	if ((push_a->index > 0 && push_b->index > 0)
-		&& push_a->median == push_b->median)
+		&& push_a->median >= 0 && push_b->median >= 0)
 	{
 		if (push_a->median == 1 || push_a->median == 0)
 			rrr(a, b);
@@ -479,7 +473,7 @@ void	individual_rotation_a(t_l **a, t_l *push_a)
 	{
 		if (push_a->median == 1 || push_a->median == 0)
 			ra(a);
-		else if (push_a->median == -1 || push_a->median == 0)
+		else if (push_a->median == -1)
 			rra(a);
 		push_a->index--;
 	}
@@ -491,7 +485,7 @@ void	individual_rotation_b(t_l **b, t_l *push_b)
 	{
 		if (push_b->median == 1 || push_b->median == 0)
 			rb(b);
-		else if (push_b->median == -1 || push_b->median == 0)
+		else if (push_b->median == -1)
 			rrb(b);
 		push_b->index--;
 	}
@@ -499,11 +493,14 @@ void	individual_rotation_b(t_l **b, t_l *push_b)
 
 void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
-	while (push_a->index != 0 && push_b->index != 0)
+	while (push_a->index > 0 && push_b->index > 0)
 	{
-		simultaneous_rotations(a, b, push_a, push_b);
-		individual_rotation_a(a, push_a);
-		individual_rotation_b(b, push_b);
+		if (push_a->index > 0 && push_b->index > 0)
+			simultaneous_rotations(a, b, push_a, push_b);
+		if (push_a->index > 0)
+			individual_rotation_a(a, push_a);
+		if (push_b->index > 0)
+			individual_rotation_b(b, push_b);
 	}
 }
 
@@ -538,7 +535,7 @@ void	actual_push_swap(t_l *a, t_l *b)
 		if (stack_size(b) == 0)
 			break ;
 	}
-	if (stack_size(a) == 3 || is_sorted(a))
+	if (stack_size(b) == 0 || is_sorted(a))
 		printf("Sorted");
 }
 
