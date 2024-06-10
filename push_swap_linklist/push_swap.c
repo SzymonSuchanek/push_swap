@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/10 19:50:53 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/10 20:17:20 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -428,6 +428,8 @@ t_l	*find_min_push_cost(t_l *a, t_l **min_node)
 	return (*min_node);
 }
 
+// Something weird is happening with stack sizes
+
 int	get_push_cost(t_l *current, t_l *head)
 {
 	t_l	*target_node;
@@ -439,11 +441,13 @@ int	get_push_cost(t_l *current, t_l *head)
 		current->push_cost = stack_size(head) - current->index;
 	else
 		current->push_cost = current->index;
+	printf("size:%d, index%d\n", stack_size(temp), target_node->index);	
 	temp = target_node;
 	if (target_node->median == -1)
 		target_node->push_cost = stack_size(head) - target_node->index;
 	else
 		target_node->push_cost = target_node->index;
+	printf("size:%d, index%d\n", stack_size(temp), target_node->index);
 	return (current->push_cost + target_node->push_cost);
 }
 
@@ -469,26 +473,20 @@ void	simultaneous_rotations(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 
 void	individual_rotation_a(t_l **a, t_l *push_a)
 {
-	if (push_a->index > 0)
-	{
-		if (push_a->median == 1 || push_a->median == 0)
-			ra(a);
-		else if (push_a->median == -1)
-			rra(a);
-		push_a->index--;
-	}
+	if (push_a->median == 1 || push_a->median == 0)
+		ra(a);
+	else if (push_a->median == -1)
+		rra(a);
+	push_a->index--;
 }
 
 void	individual_rotation_b(t_l **b, t_l *push_b)
 {
-	if (push_b->index > 0)
-	{
-		if (push_b->median == 1 || push_b->median == 0)
-			rb(b);
-		else if (push_b->median == -1)
-			rrb(b);
-		push_b->index--;
-	}
+	if (push_b->median == 1 || push_b->median == 0)
+		rb(b);
+	else if (push_b->median == -1)
+		rrb(b);
+	push_b->index--;
 }
 
 void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
