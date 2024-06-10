@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/10 18:40:39 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/10 19:50:53 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,31 +203,31 @@ void	handle_input(char **av, int ac, t_l **a)
 	}
 }
 
-int	is_sorted(t_l *a)
+int	is_sorted(t_l *head)
 {
-	t_l	*node;
+	t_l	*current;
 
-	node = a;
-	if (node == NULL || node->next == NULL)
+	current = head;
+	if (current == NULL || current->next == NULL)
 		return (1);
-	while (node->next != NULL)
+	while (current->next != NULL)
 	{
-		if (node->nbr > node->next->nbr)
+		if (current->nbr > current->next->nbr)
 		{
 			return (0);
 		}
-		node = node->next;
+		current = current->next;
 	}
 	return (1);
 }
 
-int	stack_size(t_l **stack)
+int	stack_size(t_l *head)
 {
 	int	count;
 	t_l	*current;
 
 	count = 0;
-	current = *stack;
+	current = head;
 	while (current)
 	{
 		count++;
@@ -243,9 +243,9 @@ void	two_elem_sort(t_l *a)
 
 	first = a;
 	second = first->next;
-	if (stack_size(&a) == 1)
+	if (stack_size(a) == 1)
 		exit(0);
-	if (stack_size(&a) == 2)
+	if (stack_size(a) == 2)
 	{
 		if (first->nbr > second->nbr)
 			ra(&a);
@@ -253,22 +253,24 @@ void	two_elem_sort(t_l *a)
 	exit(0);
 }
 
-t_l	*find_highest(t_l *stack)
+t_l	*find_highest(t_l *head)
 {
 	long	highest;
 	t_l		*highest_node;
+	t_l		*current;
 
-	if (!stack)
+	current = head;
+	if (!current)
 		return (NULL);
 	highest = LONG_MIN;
-	while (stack)
+	while (current)
 	{
-		if (stack->nbr > highest)
+		if (current->nbr > highest)
 		{
-			highest = stack->nbr;
-			highest_node = stack;
+			highest = current->nbr;
+			highest_node = current;
 		}
-		stack = stack->next;
+		current = current->next;
 	}
 	return (highest_node);
 }
@@ -286,70 +288,70 @@ void	three_elem_sort(t_l **a)
 		sa(a);
 }
 
-t_l	*find_closest_node(t_l *a, t_l *b)
+t_l	*find_closest_node(t_l *head_a, t_l *head_b)
 {
-	t_l	*b_node;
+	t_l	*node_b;
 	t_l	*closest;
 
 	closest = NULL;
-	b_node = b;
-	while (b_node != NULL)
+	node_b = head_b;
+	while (node_b != NULL)
 	{
-		if (b_node->nbr < a->nbr)
+		if (node_b->nbr < head_a->nbr)
 		{
-			if (closest == NULL || b_node->nbr > closest->nbr)
+			if (closest == NULL || node_b->nbr > closest->nbr)
 			{
-				closest = b_node;
+				closest = node_b;
 			}
 		}
-		b_node = b_node->next;
+		node_b = node_b->next;
 	}
 	return (closest);
 }
 
-t_l	*find_max_node(t_l *b_head)
+t_l	*find_max_node(t_l *head)
 {
 	t_l	*max_node;
-	t_l	*b_node;
+	t_l	*current;
 
 	max_node = NULL;
-	b_node = b_head;
-	while (b_node != NULL)
+	current = head;
+	while (current != NULL)
 	{
-		if (max_node == NULL || b_node->nbr > max_node->nbr)
-			max_node = b_node;
-		b_node = b_node->next;
+		if (max_node == NULL || current->nbr > max_node->nbr)
+			max_node = current;
+		current = current->next;
 	}
 	return (max_node);
 }
 
-void	update_target_node(t_l **a, t_l **b)
+void	update_target_node(t_l *head_a, t_l *head_b)
 {
 	t_l	*current;
 	t_l	*closest;
 	t_l	*max_node;
 
-	current = *a;
+	current = head_a;
 	while (current != NULL)
 	{
-		closest = find_closest_node(current, *b);
+		closest = find_closest_node(current, head_b);
 		if (closest != NULL)
 			current->target_node = closest;
 		else
 		{
-			max_node = find_max_node(*b);
+			max_node = find_max_node(head_b);
 			current->target_node = max_node;
 		}
 		current = current->next;
 	}
 }
 
-void	update_index(t_l **stack)
+void	update_index(t_l *head)
 {
 	t_l	*current;
 	int	index;
 
-	current = *stack;
+	current = head;
 	index = 0;
 	while (current != NULL)
 	{
@@ -359,15 +361,15 @@ void	update_index(t_l **stack)
 	}
 }
 
-void	update_median(t_l **stack)
+void	update_median(t_l *head)
 {
 	t_l	*current;
 	int	total_nodes;
 	int	index;
 	int	mid;
 
-	current = *stack;
-	total_nodes = stack_size(&current);
+	current = head;
+	total_nodes = stack_size(current);
 	while (current != NULL)
 	{
 		index = current->index;
@@ -382,20 +384,20 @@ void	update_median(t_l **stack)
 	}
 }
 
-void	update_variables(t_l **a, t_l **b)
+void	update_variables(t_l *head_a, t_l *head_b)
 {
-	if (stack_size(a) > 0)
+	if (stack_size(head_a) > 0)
 	{
-		update_index(a);
-		update_median(a);
+		update_index(head_a);
+		update_median(head_a);
 	}
-	if (stack_size(b) > 0)
+	if (stack_size(head_b) > 0)
 	{
-		update_index(b);
-		update_median(b);
+		update_index(head_b);
+		update_median(head_b);
 	}
-	if (stack_size(a) > 0 && stack_size(b) > 0)
-		update_target_node(a, b);
+	if (stack_size(head_a) > 0 && stack_size(head_b) > 0)
+		update_target_node(head_a, head_b);
 }
 
 t_l	*find_min_push_cost(t_l *a, t_l **min_node)
@@ -434,39 +436,35 @@ int	get_push_cost(t_l *current, t_l *head)
 	temp = current;
 	target_node = current->target_node;
 	if (current->median == -1)
-		current->push_cost = stack_size(&head) - current->index;
+		current->push_cost = stack_size(head) - current->index;
 	else
 		current->push_cost = current->index;
 	temp = target_node;
 	if (target_node->median == -1)
-		target_node->push_cost = stack_size(&head) - target_node->index;
+		target_node->push_cost = stack_size(head) - target_node->index;
 	else
 		target_node->push_cost = target_node->index;
 	return (current->push_cost + target_node->push_cost);
 }
 
-t_l	*push_cost_total(t_l *a, t_l *b)
+t_l	*push_cost_total(t_l *head_a, t_l *head_b)
 {
 	t_l	*min_node;
 
-	update_variables(&a, &b);
+	update_variables(head_a, head_b);
 	min_node = NULL;
-	find_min_push_cost(a, &min_node);
+	find_min_push_cost(head_a, &min_node);
 	return (min_node);
 }
 
 void	simultaneous_rotations(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
-	if ((push_a->index > 0 && push_b->index > 0) && push_a->median >= 0
-		&& push_b->median >= 0)
-	{
-		if (push_a->median == 1 || push_a->median == 0)
-			rrr(a, b);
-		else if (push_a->median == -1)
-			rr(a, b);
-		push_a->index--;
-		push_b->index--;
-	}
+	if (push_a->median >= 0	&& push_b->median >= 0)
+		rrr(a, b);
+	else if (push_a->median == -1)
+		rr(a, b);
+	push_a->index--;
+	push_b->index--;
 }
 
 void	individual_rotation_a(t_l **a, t_l *push_a)
@@ -495,7 +493,7 @@ void	individual_rotation_b(t_l **b, t_l *push_b)
 
 void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
-	while (push_a->index > 0 && push_b->index > 0)
+	while (push_a->index != 0 && push_b->index != 0)
 	{
 		if (push_a->index > 0 && push_b->index > 0)
 			simultaneous_rotations(a, b, push_a, push_b);
@@ -518,26 +516,26 @@ void	push_swap(t_l *a, t_l *b)
 
 void	actual_push_swap(t_l *a, t_l *b)
 {
-	while (stack_size(&a) >= 3)
+	while (stack_size(a) >= 3)
 	{
-		if (stack_size(&a) > 3)
+		if (stack_size(a) > 3)
 		{
 			push_swap(a, b);
 			pb(&b, &a);
 		}
-		if (stack_size(&a) == 3)
+		if (stack_size(a) == 3)
 		{
 			three_elem_sort(&a);
-			while (stack_size(&b) > 0)
+			while (stack_size(b) > 0)
 			{
 				push_swap(b, a);
 				pa(&b, &a);
 			}
 		}
-		if (stack_size(&b) == 0)
+		if (stack_size(b) == 0)
 			break ;
 	}
-	if (stack_size(&b) == 0 || is_sorted(a))
+	if (stack_size(b) == 0 || is_sorted(a))
 		printf("Sorted");
 }
 
@@ -545,14 +543,14 @@ void	sizebased_operation(t_l *a, t_l *b)
 {
 	if (is_sorted(a))
 		exit(0);
-	if (stack_size(&a) == 2)
+	if (stack_size(a) == 2)
 		two_elem_sort(a);
-	if (stack_size(&a) == 3)
+	if (stack_size(a) == 3)
 		three_elem_sort(&a);
-	if (stack_size(&a) > 3)
+	if (stack_size(a) > 3)
 	{
 		pb(&b, &a);
-		if (stack_size(&a) > 3)
+		if (stack_size(a) > 3)
 			pb(&b, &a);
 	}
 	if (!is_sorted(a))
