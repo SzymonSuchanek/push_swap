@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:46:58 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/08 21:15:23 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/10 18:38:32 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int					check_doubles(t_l *a, int n);
 void				ft_split(char **argv, char c, t_l **a);
 void				handle_input(char **av, int ac, t_l **a);
 int					is_sorted(t_l *a);
-int					stack_size(t_l *stack);
+int					stack_size(t_l **stack);
 void				two_elem_sort(t_l *a);
 t_l					*find_highest(t_l *stack);
 void				three_elem_sort(t_l **a);
@@ -64,7 +64,7 @@ void				update_index(t_l **stack);
 void				update_median(t_l **stack);
 void				update_variables(t_l **a, t_l **b);
 t_l					*find_min_push_cost(t_l *a, t_l **min_node);
-int					get_push_cost(t_l *current);
+int					get_push_cost(t_l *current, t_l *head);
 t_l					*push_cost_total(t_l *a, t_l *b);
 void				actual_push_swap(t_l *a, t_l *b);
 void				simultaneous_rotations(t_l **a, t_l **b, t_l *push_a,

@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/08 22:06:16 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/10 18:40:39 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,13 +221,13 @@ int	is_sorted(t_l *a)
 	return (1);
 }
 
-int	stack_size(t_l *stack)
+int	stack_size(t_l **stack)
 {
 	int	count;
 	t_l	*current;
 
 	count = 0;
-	current = stack;
+	current = *stack;
 	while (current)
 	{
 		count++;
@@ -243,9 +243,9 @@ void	two_elem_sort(t_l *a)
 
 	first = a;
 	second = first->next;
-	if (stack_size(a) == 1)
+	if (stack_size(&a) == 1)
 		exit(0);
-	if (stack_size(a) == 2)
+	if (stack_size(&a) == 2)
 	{
 		if (first->nbr > second->nbr)
 			ra(&a);
@@ -288,21 +288,19 @@ void	three_elem_sort(t_l **a)
 
 t_l	*find_closest_node(t_l *a, t_l *b)
 {
-	t_l	*closest;
-	int	min_diff;
 	t_l	*b_node;
-	int	diff;
+	t_l	*closest;
 
 	closest = NULL;
-	min_diff = INT_MAX;
 	b_node = b;
 	while (b_node != NULL)
 	{
-		diff = b_node->nbr - a->nbr;
-		if (diff >= 0 && diff < min_diff)
+		if (b_node->nbr < a->nbr)
 		{
-			min_diff = diff;
-			closest = b_node;
+			if (closest == NULL || b_node->nbr > closest->nbr)
+			{
+				closest = b_node;
+			}
 		}
 		b_node = b_node->next;
 	}
@@ -369,7 +367,7 @@ void	update_median(t_l **stack)
 	int	mid;
 
 	current = *stack;
-	total_nodes = stack_size(current);
+	total_nodes = stack_size(&current);
 	while (current != NULL)
 	{
 		index = current->index;
@@ -386,19 +384,18 @@ void	update_median(t_l **stack)
 
 void	update_variables(t_l **a, t_l **b)
 {
-	if (stack_size(*a) > 0)
+	if (stack_size(a) > 0)
 	{
 		update_index(a);
 		update_median(a);
 	}
-	if (stack_size(*b) > 0)
+	if (stack_size(b) > 0)
 	{
 		update_index(b);
 		update_median(b);
 	}
-	if (stack_size(*a) > 0 && stack_size(*b) > 0)
+	if (stack_size(a) > 0 && stack_size(b) > 0)
 		update_target_node(a, b);
-	printf("%d, %d\n", stack_size(*a), stack_size(*b));
 }
 
 t_l	*find_min_push_cost(t_l *a, t_l **min_node)
@@ -416,28 +413,33 @@ t_l	*find_min_push_cost(t_l *a, t_l **min_node)
 	}
 	while (current != NULL)
 	{
-		push_cost = get_push_cost(current);
+		push_cost = get_push_cost(current, a);
 		if (push_cost < min_cost)
 		{
 			min_cost = push_cost;
 			*min_node = current;
+			if (min_cost == 0)
+				return (*min_node);
 		}
 		current = current->next;
 	}
 	return (*min_node);
 }
 
-int	get_push_cost(t_l *current)
+int	get_push_cost(t_l *current, t_l *head)
 {
 	t_l	*target_node;
+	t_l	*temp;
 
+	temp = current;
 	target_node = current->target_node;
 	if (current->median == -1)
-		current->push_cost = stack_size(current) - current->index;
+		current->push_cost = stack_size(&head) - current->index;
 	else
 		current->push_cost = current->index;
+	temp = target_node;
 	if (target_node->median == -1)
-		target_node->push_cost = stack_size(target_node) - target_node->index;
+		target_node->push_cost = stack_size(&head) - target_node->index;
 	else
 		target_node->push_cost = target_node->index;
 	return (current->push_cost + target_node->push_cost);
@@ -455,8 +457,8 @@ t_l	*push_cost_total(t_l *a, t_l *b)
 
 void	simultaneous_rotations(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
-	if ((push_a->index > 0 && push_b->index > 0)
-		&& push_a->median >= 0 && push_b->median >= 0)
+	if ((push_a->index > 0 && push_b->index > 0) && push_a->median >= 0
+		&& push_b->median >= 0)
 	{
 		if (push_a->median == 1 || push_a->median == 0)
 			rrr(a, b);
@@ -516,26 +518,26 @@ void	push_swap(t_l *a, t_l *b)
 
 void	actual_push_swap(t_l *a, t_l *b)
 {
-	while (stack_size(a) >= 3)
+	while (stack_size(&a) >= 3)
 	{
-		if (stack_size(a) > 3)
+		if (stack_size(&a) > 3)
 		{
 			push_swap(a, b);
 			pb(&b, &a);
 		}
-		if (stack_size(a) == 3)
+		if (stack_size(&a) == 3)
 		{
 			three_elem_sort(&a);
-			while (stack_size(b) > 0)
+			while (stack_size(&b) > 0)
 			{
 				push_swap(b, a);
 				pa(&b, &a);
 			}
 		}
-		if (stack_size(b) == 0)
+		if (stack_size(&b) == 0)
 			break ;
 	}
-	if (stack_size(b) == 0 || is_sorted(a))
+	if (stack_size(&b) == 0 || is_sorted(a))
 		printf("Sorted");
 }
 
@@ -543,14 +545,14 @@ void	sizebased_operation(t_l *a, t_l *b)
 {
 	if (is_sorted(a))
 		exit(0);
-	if (stack_size(a) == 2)
+	if (stack_size(&a) == 2)
 		two_elem_sort(a);
-	if (stack_size(a) == 3)
+	if (stack_size(&a) == 3)
 		three_elem_sort(&a);
-	if (stack_size(a) > 3)
+	if (stack_size(&a) > 3)
 	{
 		pb(&b, &a);
-		if (stack_size(a) > 3)
+		if (stack_size(&a) > 3)
 			pb(&b, &a);
 	}
 	if (!is_sorted(a))
