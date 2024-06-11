@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/11 18:09:42 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/11 20:28:29 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -428,8 +428,6 @@ t_l	*find_min_push_cost(t_l *head_a, t_l *head_b, t_l **min_node)
 	return (*min_node);
 }
 
-// Something weird is happening with stack sizes
-
 int	get_push_cost(t_l *current, t_l *head_a, t_l *head_b)
 {
 	t_l	*target_node;
@@ -446,10 +444,6 @@ int	get_push_cost(t_l *current, t_l *head_a, t_l *head_b)
 		target_node->push_cost = stack_size(head_b) - target_node->index;
 	else
 		target_node->push_cost = target_node->index;
-	// printf("A: %d, %d, %d\tB: %d, %d, %d\n", current->nbr, current->median, current->push_cost, target_node->nbr, target_node->median, target_node->push_cost);
-	// printf("a push cost:%d, b push cost:%d\n", current->push_cost, target_node->push_cost);
-	// printf("a median:%d, b median:%d\n", current->median, target_node->median);
-	// printf("push cost:%d\n", target_node->push_cost + current->push_cost);
 	return (current->push_cost + target_node->push_cost);
 }
 
@@ -489,8 +483,7 @@ void	individual_rotation_b(t_l **b, t_l *push_b)
 
 void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
-	printf("%d, %d\n", push_a->index, push_b->index);
-	while (push_a->index != 0 && push_b->index != 0)
+	while (push_a->index != 0 || push_b->index != 0)
 	{
 		if (push_a->index > 0 && push_b->index > 0)
 		{
@@ -527,7 +520,7 @@ void	actual_push_swap(t_l *a, t_l *b)
 	{
 		if (stack_size(a) > 3)
 		{
-			push_swap(a, b);
+			push_swap(a, b); // here
 			pb(&b, &a);
 		}
 		if (stack_size(a) == 3)
@@ -539,10 +532,12 @@ void	actual_push_swap(t_l *a, t_l *b)
 				pa(&b, &a);
 			}
 		}
+		printf("stack size a:%d\n", stack_size(a));
+		printf("stack size b:%d\n", stack_size(b));
 		if (stack_size(b) == 0)
 			break ;
 	}
-	if (stack_size(b) == 0 || is_sorted(a))
+	if (stack_size(b) == 0 && is_sorted(a))
 		printf("Sorted");
 }
 
