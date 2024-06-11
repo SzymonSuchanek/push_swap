@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:46:58 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/10 19:12:55 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/11 16:47:07 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,10 @@ void				update_target_node(t_l *head_a, t_l *head_b);
 void				update_index(t_l *head);
 void				update_median(t_l *head);
 void				update_variables(t_l *head_a, t_l *head_b);
-t_l					*find_min_push_cost(t_l *a, t_l **min_node);
+t_l					*find_min_push_cost(t_l *head_a, t_l *head_b,
+						t_l **min_node);
 t_l					*push_cost_total(t_l *head_a, t_l *head_b);
-int					get_push_cost(t_l *current, t_l *head);
+int					get_push_cost(t_l *current, t_l *head_a, t_l *head_b);
 void				actual_push_swap(t_l *a, t_l *b);
 void				simultaneous_rotations(t_l **a, t_l **b, t_l *push_a,
 						t_l *push_b);

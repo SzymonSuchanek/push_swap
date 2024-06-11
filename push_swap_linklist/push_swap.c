@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/10 20:17:20 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/11 18:09:42 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -400,14 +400,14 @@ void	update_variables(t_l *head_a, t_l *head_b)
 		update_target_node(head_a, head_b);
 }
 
-t_l	*find_min_push_cost(t_l *a, t_l **min_node)
+t_l	*find_min_push_cost(t_l *head_a, t_l *head_b, t_l **min_node)
 {
 	t_l	*current;
 	int	min_cost;
 	int	push_cost;
 
 	min_cost = INT_MAX;
-	current = a;
+	current = head_a;
 	if (current == NULL)
 	{
 		*min_node = NULL;
@@ -415,7 +415,7 @@ t_l	*find_min_push_cost(t_l *a, t_l **min_node)
 	}
 	while (current != NULL)
 	{
-		push_cost = get_push_cost(current, a);
+		push_cost = get_push_cost(current, head_a, head_b);
 		if (push_cost < min_cost)
 		{
 			min_cost = push_cost;
@@ -430,7 +430,7 @@ t_l	*find_min_push_cost(t_l *a, t_l **min_node)
 
 // Something weird is happening with stack sizes
 
-int	get_push_cost(t_l *current, t_l *head)
+int	get_push_cost(t_l *current, t_l *head_a, t_l *head_b)
 {
 	t_l	*target_node;
 	t_l	*temp;
@@ -438,16 +438,18 @@ int	get_push_cost(t_l *current, t_l *head)
 	temp = current;
 	target_node = current->target_node;
 	if (current->median == -1)
-		current->push_cost = stack_size(head) - current->index;
+		current->push_cost = stack_size(head_a) - current->index;
 	else
 		current->push_cost = current->index;
-	printf("size:%d, index%d\n", stack_size(temp), target_node->index);	
 	temp = target_node;
 	if (target_node->median == -1)
-		target_node->push_cost = stack_size(head) - target_node->index;
+		target_node->push_cost = stack_size(head_b) - target_node->index;
 	else
 		target_node->push_cost = target_node->index;
-	printf("size:%d, index%d\n", stack_size(temp), target_node->index);
+	// printf("A: %d, %d, %d\tB: %d, %d, %d\n", current->nbr, current->median, current->push_cost, target_node->nbr, target_node->median, target_node->push_cost);
+	// printf("a push cost:%d, b push cost:%d\n", current->push_cost, target_node->push_cost);
+	// printf("a median:%d, b median:%d\n", current->median, target_node->median);
+	// printf("push cost:%d\n", target_node->push_cost + current->push_cost);
 	return (current->push_cost + target_node->push_cost);
 }
 
@@ -457,7 +459,7 @@ t_l	*push_cost_total(t_l *head_a, t_l *head_b)
 
 	update_variables(head_a, head_b);
 	min_node = NULL;
-	find_min_push_cost(head_a, &min_node);
+	find_min_push_cost(head_a, head_b, &min_node);
 	return (min_node);
 }
 
@@ -467,8 +469,6 @@ void	simultaneous_rotations(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 		rrr(a, b);
 	else if (push_a->median == -1)
 		rr(a, b);
-	push_a->index--;
-	push_b->index--;
 }
 
 void	individual_rotation_a(t_l **a, t_l *push_a)
@@ -477,7 +477,6 @@ void	individual_rotation_a(t_l **a, t_l *push_a)
 		ra(a);
 	else if (push_a->median == -1)
 		rra(a);
-	push_a->index--;
 }
 
 void	individual_rotation_b(t_l **b, t_l *push_b)
@@ -486,19 +485,29 @@ void	individual_rotation_b(t_l **b, t_l *push_b)
 		rb(b);
 	else if (push_b->median == -1)
 		rrb(b);
-	push_b->index--;
 }
 
 void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
+	printf("%d, %d\n", push_a->index, push_b->index);
 	while (push_a->index != 0 && push_b->index != 0)
 	{
 		if (push_a->index > 0 && push_b->index > 0)
+		{
 			simultaneous_rotations(a, b, push_a, push_b);
+			push_a->index--;
+			push_b->index--;
+		}
 		if (push_a->index > 0)
+		{
 			individual_rotation_a(a, push_a);
+			push_a->index--;	
+		}
 		if (push_b->index > 0)
+		{
 			individual_rotation_b(b, push_b);
+			push_b->index--;
+		}
 	}
 }
 
