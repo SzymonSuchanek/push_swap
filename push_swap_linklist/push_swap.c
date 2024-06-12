@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/11 20:28:29 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/12 15:03:28 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -400,6 +400,25 @@ void	update_variables(t_l *head_a, t_l *head_b)
 		update_target_node(head_a, head_b);
 }
 
+int	get_push_cost(t_l *current, t_l *head_a, t_l *head_b)
+{
+	t_l	*target_node;
+	t_l	*temp;
+
+	temp = current;
+	target_node = current->target_node;
+	if (current->median == -1)
+		current->push_cost = stack_size(head_a) - current->index;
+	else
+		current->push_cost = current->index;
+	temp = target_node;
+	if (target_node->median == -1)
+		target_node->push_cost = stack_size(head_b) - target_node->index;
+	else
+		target_node->push_cost = target_node->index;
+	return (current->push_cost + target_node->push_cost);
+}
+
 t_l	*find_min_push_cost(t_l *head_a, t_l *head_b, t_l **min_node)
 {
 	t_l	*current;
@@ -426,25 +445,6 @@ t_l	*find_min_push_cost(t_l *head_a, t_l *head_b, t_l **min_node)
 		current = current->next;
 	}
 	return (*min_node);
-}
-
-int	get_push_cost(t_l *current, t_l *head_a, t_l *head_b)
-{
-	t_l	*target_node;
-	t_l	*temp;
-
-	temp = current;
-	target_node = current->target_node;
-	if (current->median == -1)
-		current->push_cost = stack_size(head_a) - current->index;
-	else
-		current->push_cost = current->index;
-	temp = target_node;
-	if (target_node->median == -1)
-		target_node->push_cost = stack_size(head_b) - target_node->index;
-	else
-		target_node->push_cost = target_node->index;
-	return (current->push_cost + target_node->push_cost);
 }
 
 t_l	*push_cost_total(t_l *head_a, t_l *head_b)
@@ -520,8 +520,24 @@ void	actual_push_swap(t_l *a, t_l *b)
 	{
 		if (stack_size(a) > 3)
 		{
-			push_swap(a, b); // here
+			printf("Before\n");
+			t_l *aa = a;
+			while (aa)
+			{
+				printf("%d ", aa->nbr);
+				aa = aa->next;
+			}
+			printf("\n");
+			push_swap(a, b);
 			pb(&b, &a);
+			printf("After\n");
+			aa = a;
+			while (aa)
+			{
+				printf("%d ", aa->nbr);
+				aa = aa->next;
+			}
+			printf("\n");
 		}
 		if (stack_size(a) == 3)
 		{

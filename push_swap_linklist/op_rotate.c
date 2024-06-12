@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 14:08:29 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/11 19:49:32 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/12 13:55:07 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,30 @@
 
 void	ra(t_l **a)
 {
+	t_l	*first;
 	t_l	*last;
 
 	if (!*a || !(*a)->next)
 		return ;
+	first = *a;
 	last = find_last_node(*a);
-	last->next = *a;
-	*a = (*a)->next;
+	last->next = first;
+	*a = first->next;
 	(*a)->prev = NULL;
 	last->next->prev = last;
 	last->next->next = NULL;
-	// update to ft_printf
+	// Update to ft_printf
 	printf("ra\n");
+
+	// t_l *ptr = *a;
+	// while (ptr)
+	// {
+	// 	printf("%d ", ptr->nbr);
+	// 	ptr = ptr->next;
+	// }
+	// printf("\n");
+	// ptr = *a;
+	// printf("stack size: %d\n", stack_size(*a));
 }
 
 void	rb(t_l **b)
