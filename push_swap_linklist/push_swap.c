@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/12 15:03:28 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/12 19:52:42 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -504,14 +504,14 @@ void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 	}
 }
 
-void	push_swap(t_l *a, t_l *b)
+void	push_swap(t_l **a, t_l **b)
 {
 	t_l	*push_a;
 	t_l	*push_b;
 
-	push_a = push_cost_total(a, b);
+	push_a = push_cost_total(*a, *b);
 	push_b = push_a->target_node;
-	execute_push_swap_loop(&a, &b, push_a, push_b);
+	execute_push_swap_loop(a, b, push_a, push_b);
 }
 
 void	actual_push_swap(t_l *a, t_l *b)
@@ -520,36 +520,18 @@ void	actual_push_swap(t_l *a, t_l *b)
 	{
 		if (stack_size(a) > 3)
 		{
-			printf("Before\n");
-			t_l *aa = a;
-			while (aa)
-			{
-				printf("%d ", aa->nbr);
-				aa = aa->next;
-			}
-			printf("\n");
-			push_swap(a, b);
+			push_swap(&a, &b);
 			pb(&b, &a);
-			printf("After\n");
-			aa = a;
-			while (aa)
-			{
-				printf("%d ", aa->nbr);
-				aa = aa->next;
-			}
-			printf("\n");
 		}
 		if (stack_size(a) == 3)
 		{
 			three_elem_sort(&a);
 			while (stack_size(b) > 0)
 			{
-				push_swap(b, a);
+				push_swap(&b, &a);
 				pa(&b, &a);
 			}
 		}
-		printf("stack size a:%d\n", stack_size(a));
-		printf("stack size b:%d\n", stack_size(b));
 		if (stack_size(b) == 0)
 			break ;
 	}

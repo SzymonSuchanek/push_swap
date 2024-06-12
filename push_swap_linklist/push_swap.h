@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:46:58 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/12 12:50:27 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/12 19:48:47 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void				individual_rotation_a(t_l **a, t_l *push_a);
 void				individual_rotation_b(t_l **b, t_l *push_b);
 void				execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a,
 						t_l *push_b);
-void				push_swap(t_l *a, t_l *b);
+void				push_swap(t_l **a, t_l **b);
 void				sizebased_operation(t_l *a, t_l *b);
 
 #endif
