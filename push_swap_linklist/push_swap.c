@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:45:43 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/12 19:52:42 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/13 19:56:21 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,6 +309,27 @@ t_l	*find_closest_node(t_l *head_a, t_l *head_b)
 	return (closest);
 }
 
+t_l	*find_closest_node1(t_l *head_a, t_l *head_b)
+{
+	t_l	*node_b;
+	t_l	*closest;
+
+	closest = NULL;
+	node_b = head_b;
+	while (node_b != NULL)
+	{
+		if (node_b->nbr > head_a->nbr)
+		{
+			if (closest == NULL || node_b->nbr < closest->nbr)
+			{
+				closest = node_b;
+			}
+		}
+		node_b = node_b->next;
+	}
+	return (closest);
+}
+
 t_l	*find_max_node(t_l *head)
 {
 	t_l	*max_node;
@@ -323,6 +344,22 @@ t_l	*find_max_node(t_l *head)
 		current = current->next;
 	}
 	return (max_node);
+}
+
+t_l	*find_min_node(t_l *head)
+{
+	t_l	*min_node;
+	t_l	*current;
+
+	min_node = NULL;
+	current = head;
+	while (current != NULL)
+	{
+		if (min_node == NULL || current->nbr < min_node->nbr)
+			min_node = current;
+		current = current->next;
+	}
+	return (min_node);
 }
 
 void	update_target_node(t_l *head_a, t_l *head_b)
@@ -340,6 +377,27 @@ void	update_target_node(t_l *head_a, t_l *head_b)
 		else
 		{
 			max_node = find_max_node(head_b);
+			current->target_node = max_node;
+		}
+		current = current->next;
+	}
+}
+
+void	update_target_node1(t_l *head_a, t_l *head_b)
+{
+	t_l	*current;
+	t_l	*closest;
+	t_l	*max_node;
+
+	current = head_a;
+	while (current != NULL)
+	{
+		closest = find_closest_node1(current, head_b);
+		if (closest != NULL)
+			current->target_node = closest;
+		else
+		{
+			max_node = find_min_node(head_b);
 			current->target_node = max_node;
 		}
 		current = current->next;
@@ -400,6 +458,22 @@ void	update_variables(t_l *head_a, t_l *head_b)
 		update_target_node(head_a, head_b);
 }
 
+void	update_variables1(t_l *head_a, t_l *head_b)
+{
+	if (stack_size(head_a) > 0)
+	{
+		update_index(head_a);
+		update_median(head_a);
+	}
+	if (stack_size(head_b) > 0)
+	{
+		update_index(head_b);
+		update_median(head_b);
+	}
+	if (stack_size(head_a) > 0 && stack_size(head_b) > 0)
+		update_target_node1(head_a, head_b); // didnt update target node
+}
+
 int	get_push_cost(t_l *current, t_l *head_a, t_l *head_b)
 {
 	t_l	*target_node;
@@ -457,9 +531,19 @@ t_l	*push_cost_total(t_l *head_a, t_l *head_b)
 	return (min_node);
 }
 
+t_l	*push_cost_total1(t_l *head_a, t_l *head_b)
+{
+	t_l	*min_node;
+
+	update_variables1(head_a, head_b);
+	min_node = NULL;
+	find_min_push_cost(head_a, head_b, &min_node);
+	return (min_node);
+}
+
 void	simultaneous_rotations(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 {
-	if (push_a->median >= 0	&& push_b->median >= 0)
+	if (push_a->median >= 0 && push_b->median >= 0)
 		rrr(a, b);
 	else if (push_a->median == -1)
 		rr(a, b);
@@ -494,7 +578,7 @@ void	execute_push_swap_loop(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 		if (push_a->index > 0)
 		{
 			individual_rotation_a(a, push_a);
-			push_a->index--;	
+			push_a->index--;
 		}
 		if (push_b->index > 0)
 		{
@@ -514,6 +598,48 @@ void	push_swap(t_l **a, t_l **b)
 	execute_push_swap_loop(a, b, push_a, push_b);
 }
 
+void	push_swap1(t_l **a, t_l **b)
+{
+	t_l	*push_a;
+	t_l	*push_b;
+
+	push_a = push_cost_total1(*a, *b);
+	push_b = push_a->target_node;
+	printf ("i:%d, m:%d\ti:%d, m:%d\n", push_a->index, push_a->median, push_a->target_node->index, push_a->target_node->median);
+	printf("b nbr:%d\ta nbr:%d\n", push_a->nbr, push_a->target_node->nbr);
+	execute_push_swap_loop(a, b, push_a, push_b);
+}
+
+int	find_lowest(t_l *head)
+{
+	int	lowest;
+	t_l	*current;
+
+	lowest = head->nbr;
+	current = head;
+	while (current != NULL)
+	{
+		if (current->nbr < lowest)
+			lowest = current->nbr;
+		current = current->next;
+	}
+	return (lowest);
+}
+
+void	final_rotate(t_l **head)
+{
+	int	lowest;
+
+	lowest = find_lowest(*head);
+	while ((*head)->nbr != lowest)
+	{
+		if ((*head)->median == 1 || (*head)->median == 0)
+			ra(head);
+		else if ((*head)->median == -1)
+			rra(head);
+	}
+}
+
 void	actual_push_swap(t_l *a, t_l *b)
 {
 	while (stack_size(a) >= 3)
@@ -528,13 +654,16 @@ void	actual_push_swap(t_l *a, t_l *b)
 			three_elem_sort(&a);
 			while (stack_size(b) > 0)
 			{
-				push_swap(&b, &a);
+				push_swap1(&b, &a);
 				pa(&b, &a);
 			}
 		}
 		if (stack_size(b) == 0)
 			break ;
 	}
+	// update_median(a);
+	// find_lowest(a);
+	// final_rotate(&a);
 	if (stack_size(b) == 0 && is_sorted(a))
 		printf("Sorted");
 }
