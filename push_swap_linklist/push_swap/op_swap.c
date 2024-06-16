@@ -1,59 +1,59 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   op_rrotate.c                                       :+:      :+:    :+:   */
+/*   op_swap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/01 13:38:19 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/14 17:50:19 by ssuchane         ###   ########.fr       */
+/*   Created: 2024/06/01 14:08:29 by ssuchane          #+#    #+#             */
+/*   Updated: 2024/06/01 14:26:21 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-void	rra(t_l **stack)
+void	sa(t_l **stack)
 {
-	t_l	*last;
-	t_l	*second_last;
+	t_l	*first;
+	t_l	*second;
 
 	if (!stack || !*stack || !(*stack)->next)
 		return ;
-	last = *stack;
-	while (last->next)
-		last = last->next;
-	second_last = last->prev;
-	second_last->next = NULL;
-	last->prev = NULL;
-	last->next = *stack;
-	(*stack)->prev = last;
-	*stack = last;
+	first = *stack;
+	second = first->next;
+	first->next = second->next;
+	if (second->next)
+		second->next->prev = first;
+	second->next = first;
+	second->prev = first->prev;
+	first->prev = second;
+	*stack = second;
 	// update to ft_printf
-	printf("rra\n");
+	printf("sa\n");
 }
 
-void	rrb(t_l **stack)
+void	sb(t_l **stack)
 {
-	t_l	*last;
-	t_l	*second_last;
+	t_l	*first;
+	t_l	*second;
 
 	if (!stack || !*stack || !(*stack)->next)
 		return ;
-	last = *stack;
-	while (last->next)
-		last = last->next;
-	second_last = last->prev;
-	second_last->next = NULL;
-	last->prev = NULL;
-	last->next = *stack;
-	(*stack)->prev = last;
-	*stack = last;
+	first = *stack;
+	second = first->next;
+	first->next = second->next;
+	if (second->next)
+		second->next->prev = first;
+	second->next = first;
+	second->prev = first->prev;
+	first->prev = second;
+	*stack = second;
 	// update to ft_printf
-	printf("rrb\n");
+	printf("sb\n");
 }
 
-void	rrr(t_l **a, t_l **b)
+void	ss(t_l **a, t_l **b)
 {
-	rra(a);
-	rrb(b);
+	sa(a);
+	sa(b);
 }

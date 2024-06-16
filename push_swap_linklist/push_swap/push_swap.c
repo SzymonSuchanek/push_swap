@@ -12,7 +12,7 @@
 
 	#include "push_swap.h"
 
-	void	exit_error(void)
+	void	exit_error(void) // good
 	{
 		printf("Error\n");
 		exit(0);
@@ -297,27 +297,6 @@
 		node_b = head_b;
 		while (node_b != NULL)
 		{
-			if (node_b->nbr < head_a->nbr)
-			{
-				if (closest == NULL || node_b->nbr > closest->nbr)
-				{
-					closest = node_b;
-				}
-			}
-			node_b = node_b->next;
-		}
-		return (closest);
-	}
-
-	t_l	*find_closest_node1(t_l *head_a, t_l *head_b)
-	{
-		t_l	*node_b;
-		t_l	*closest;
-
-		closest = NULL;
-		node_b = head_b;
-		while (node_b != NULL)
-		{
 			if (node_b->nbr > head_a->nbr)
 			{
 				if (closest == NULL || node_b->nbr < closest->nbr)
@@ -328,22 +307,6 @@
 			node_b = node_b->next;
 		}
 		return (closest);
-	}
-
-	t_l	*find_max_node(t_l *head)
-	{
-		t_l	*max_node;
-		t_l	*current;
-
-		max_node = NULL;
-		current = head;
-		while (current != NULL)
-		{
-			if (max_node == NULL || current->nbr > max_node->nbr)
-				max_node = current;
-			current = current->next;
-		}
-		return (max_node);
 	}
 
 	t_l	*find_min_node(t_l *head)
@@ -372,27 +335,6 @@
 		while (current != NULL)
 		{
 			closest = find_closest_node(current, head_b);
-			if (closest != NULL)
-				current->target_node = closest;
-			else
-			{
-				max_node = find_max_node(head_b);
-				current->target_node = max_node;
-			}
-			current = current->next;
-		}
-	}
-
-	void	update_target_node1(t_l *head_a, t_l *head_b)
-	{
-		t_l	*current;
-		t_l	*closest;
-		t_l	*max_node;
-
-		current = head_a;
-		while (current != NULL)
-		{
-			closest = find_closest_node1(current, head_b);
 			if (closest != NULL)
 				current->target_node = closest;
 			else
@@ -458,22 +400,6 @@
 			update_target_node(head_a, head_b);
 	}
 
-	void	update_variables1(t_l *head_a, t_l *head_b)
-	{
-		if (stack_size(head_a) > 0)
-		{
-			update_index(head_a);
-			update_median(head_a);
-		}
-		if (stack_size(head_b) > 0)
-		{
-			update_index(head_b);
-			update_median(head_b);
-		}
-		if (stack_size(head_a) > 0 && stack_size(head_b) > 0)
-			update_target_node1(head_a, head_b);
-	}
-
 	int	get_push_cost(t_l *current, t_l *head_a, t_l *head_b)
 	{
 		t_l	*target_node;
@@ -531,16 +457,6 @@
 		return (min_node);
 	}
 
-	t_l	*push_cost_total1(t_l *head_a, t_l *head_b)
-	{
-		t_l	*min_node;
-
-		update_variables1(head_a, head_b);
-		min_node = NULL;
-		find_min_push_cost(head_a, head_b, &min_node);
-		return (min_node);
-	}
-
 	void	simultaneous_rotations(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
 	{
 		if (push_a->median >= 0 && push_b->median >= 0)
@@ -577,29 +493,6 @@
 			}
 			if (push_a->index > 0)
 			{
-				individual_rotation_a(a, push_a);
-				push_a->index--;
-			}
-			if (push_b->index > 0)
-			{
-				individual_rotation_b(b, push_b);
-				push_b->index--;
-			}
-		}
-	}
-
-	void	execute_push_swap_loop1(t_l **a, t_l **b, t_l *push_a, t_l *push_b)
-	{
-		while (push_a->index != 0 || push_b->index != 0)
-		{
-			if (push_a->index > 0 && push_b->index > 0)
-			{
-				simultaneous_rotations(a, b, push_a, push_b);
-				push_a->index--;
-				push_b->index--;
-			}
-			if (push_a->index > 0)
-			{
 				individual_rotation_b(a, push_a);
 				push_a->index--;
 			}
@@ -619,22 +512,10 @@
 		// printf("Before Stack sizes: %d, %d\n", stack_size(push_a), stack_size(push_b));
 		push_a = push_cost_total(*a, *b);
 		push_b = push_a->target_node;
-		execute_push_swap_loop(a, b, push_a, push_b);
-		printf("After Stack sizes: %d, %d\n", stack_size(push_a), stack_size(push_b));
-	}
-
-	void	push_swap1(t_l **a, t_l **b)
-	{
-		t_l	*push_a;
-		t_l	*push_b;
-
-		// printf("Before Stack sizes: %d, %d\n", stack_size(push_a), stack_size(push_b));
-		push_a = push_cost_total1(*a, *b);
-		push_b = push_a->target_node;
 		// printf("b:%d, a:%d\n", stack_size(push_a), stack_size(push_b));
 		// printf ("i:%d, m:%d\ti:%d, m:%d\n", push_a->index, push_a->median, push_a->target_node->index, push_a->target_node->median);
 		// printf("b nbr:%d\ta nbr:%d\n", push_a->nbr, push_a->target_node->nbr);
-		execute_push_swap_loop1(a, b, push_a, push_b);
+		execute_push_swap_loop(a, b, push_a, push_b);
 		printf("After Stack sizes: %d, %d\n", stack_size(push_a), stack_size(push_b));
 	}
 
@@ -674,15 +555,16 @@
 		{
 			if (stack_size(a) > 3)
 			{
-				push_swap(&a, &b);
+				if (a == find_highest(a))
+					ra(&a);
 				pb(&b, &a);
 			}
-			if (stack_size(a) == 3)
+			else
 			{
 				three_elem_sort(&a);
 				while (stack_size(b) > 0)
 				{
-					push_swap1(&b, &a);
+					push_swap(&b, &a);
 					pa(&b, &a);
 				}
 			}
@@ -704,12 +586,6 @@
 			two_elem_sort(a);
 		if (stack_size(a) == 3)
 			three_elem_sort(&a);
-		if (stack_size(a) > 3)
-		{
-			pb(&b, &a);
-			if (stack_size(a) > 3)
-				pb(&b, &a);
-		}
 		if (!is_sorted(a))
 			actual_push_swap(a, b);
 	}
