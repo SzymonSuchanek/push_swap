@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:24:17 by eaktimur          #+#    #+#             */
-/*   Updated: 2024/06/24 16:12:14 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/24 19:26:45 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,62 +151,75 @@ int	check_doubles(t_l *a, int n)
 	return (0);
 }
 
-void	ft_split(char **argv, char c, t_l **a)
+void handle_number(char **str, int *num, int *is_negative, int *is_num_started)
 {
-	t_l		*a_list;
-	char	*str;
-	int		num;
-	int		is_num_started;
-	int		is_negative;
+    *is_num_started = 1;
+    *num = 0;
+    if (**str == '-')
+    {
+        *is_negative = 1;
+        (*str)++;
+    }
+    while (is_num(**str))
+    {
+        *num = *num * 10 + (**str - '0');
+        (*str)++;
+    }
+}
 
-	a_list = NULL;
-	num = 0;
-	is_num_started = 0;
-	is_negative = 0;
-	str = argv[1];
-	while (*str)
-	{
-		if (*str == c)
-		{
-			if (is_num_started)
-			{
-				if (is_negative)
-					num = -num;
-				if (check_doubles(a_list, num))
-					exit_error();
-				populate_a(&a_list, num);
-				is_num_started = 0;
-				is_negative = 0;
-			}
-		}
-		else if (is_num(*str) || (*str == '-' && !is_num_started))
-		{
-			if (!is_num_started)
-			{
-				is_num_started = 1;
-				num = 0;
-				if (*str == '-')
-				{
-					is_negative = 1;
-					str++;
-					continue ;
-				}
-			}
-			num = num * 10 + (*str - '0');
-		}
-		else
-			exit_error();
-		str++;
-	}
-	if (is_num_started)
-	{
-		if (is_negative)
-			num = -num;
-		if (check_doubles(a_list, num))
-			exit_error();
-		populate_a(&a_list, num);
-	}
-	*a = a_list;
+void add_to_list(t_l **a_list, int num, int is_negative)
+{
+    if (is_negative)
+    {
+        num = -num;
+    }
+    if (check_doubles(*a_list, num))
+    {
+        exit_error();
+    }
+    populate_a(a_list, num);
+}
+
+void process_char(char **str, char c, t_l **a_list, int *num, int *is_num_started, int *is_negative)
+{
+    if (**str == c)
+    {
+        if (*is_num_started)
+        {
+            add_to_list(a_list, *num, *is_negative);
+            *is_num_started = 0;
+            *is_negative = 0;
+        }
+    }
+    else if (is_num(**str) || (**str == '-' && !*is_num_started))
+    {
+        handle_number(str, num, is_negative, is_num_started);
+        return;
+    }
+    else
+    {
+        exit_error();
+    }
+    (*str)++;
+}
+
+void ft_split(char **argv, char c, t_l **a)
+{
+    t_l *a_list = NULL;
+    char *str = argv[1];
+    int num = 0;
+    int is_num_started = 0;
+    int is_negative = 0;
+
+    while (*str)
+    {
+        process_char(&str, c, &a_list, &num, &is_num_started, &is_negative);
+    }
+    if (is_num_started)
+    {
+        add_to_list(&a_list, num, is_negative);
+    }
+    *a = a_list;
 }
 
 void	update_indexes(t_l **a, t_l **b)
@@ -550,7 +563,7 @@ void	final_rotate(t_l **a)
 	i = 0;
 	if (median == -1)
 	{
-		while(i < (stack_size(*a) - index))
+		while (i < (stack_size(*a) - index))
 		{
 			reverse_rotate(a, 'a');
 			i++;
@@ -558,7 +571,7 @@ void	final_rotate(t_l **a)
 	}
 	else if (median == 1)
 	{
-		while(i < index)
+		while (i < index)
 		{
 			r(a, 'a');
 			i++;
@@ -644,10 +657,10 @@ int	main(int argc, char **argv)
 	// print_stack(&b);
 	sizebased_operation(&a, &b);
 	// point_to_first(&a, &b);
-//	printf("\nafter:\n a:\n");
-//	print_stack(&a);
-//	printf("\nb:\n");
-//	print_stack(&b);
+	//	printf("\nafter:\n a:\n");
+	//	print_stack(&a);
+	//	printf("\nb:\n");
+	//	print_stack(&b);
 	exit_free_list(a);
 	return (0);
 }

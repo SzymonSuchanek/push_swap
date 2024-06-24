@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 17:15:55 by eaktimur          #+#    #+#             */
-/*   Updated: 2024/06/24 16:15:44 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/24 19:03:32 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,4 @@ void	three_elem_sort(t_l **a)
 		reverse_rotate(a, 'a');
 	if ((*a)->nbr > (*a)->next->nbr)
 		s(a, 'a');
-	// 	exit_free_list(a);
 }
-
-

@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 16:28:50 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/24 16:32:00 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/24 19:01:38 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	update_and_execute(t_l **a, t_l **b, t_l **to_push)
 {
 	update_indexes(a, b);
 	update_targets(a, b);
-	*to_push = push_cost(a, b);
+	*to_push = find_cheapest_node(b);
 	update_median(a);
 	update_median(b);
 	execute_operations(a, b, *to_push);
@@ -47,6 +47,7 @@ void	actual_push_swap(t_l **a, t_l **b)
 			break ;
 	}
 	update_median(a);
+	update_indexes(a, b);
 	final_rotate(a);
 }
 
