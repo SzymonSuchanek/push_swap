@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/19 17:54:28 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/19 18:09:10 by ssuchane         ###   ########.fr       */
+/*   Created: 2024/06/21 16:55:34 by eaktimur          #+#    #+#             */
+/*   Updated: 2024/06/24 16:50:08 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	push_a(t_l **a, t_l **b)
 {
-	t_l *node_to_move;
+	t_l	*node_to_move;
 
 	if (!b || !*b)
 		return ;
@@ -33,7 +33,7 @@ void	push_a(t_l **a, t_l **b)
 
 void	push_b(t_l **a, t_l **b)
 {
-	t_l *node_to_move;
+	t_l	*node_to_move;
 
 	if (!a || !*a)
 		return ;

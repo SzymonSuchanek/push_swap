@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_input.c                                     :+:      :+:    :+:   */
+/*   ft_split_(fix).c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/19 18:28:27 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/19 18:30:00 by ssuchane         ###   ########.fr       */
+/*   Created: 2024/06/24 16:11:46 by ssuchane          #+#    #+#             */
+/*   Updated: 2024/06/24 16:11:48 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,26 +84,4 @@ void	ft_split(char **argv, char c, t_l **a)
 		populate_a(&a_list, num);
 	}
 	*a = a_list;
-}
-
-void	handle_input(char **argv, int argc, t_l **a)
-{
-	int i;
-	int j;
-
-	i = 1;
-	while (i < argc)
-	{
-		j = 0;
-		while (argv[i][j])
-		{
-			if (!is_num(argv[i][j]) && !is_sign(argv[i][j]))
-				exit_error();
-			j++;
-		}
-		if (check_doubles(*a, ft_atoi(argv[i])))
-			exit_error();
-		populate_a(a, ft_atoi(argv[i]));
-		i++;
-	}
 }

@@ -1,37 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   low_sort.c                                         :+:      :+:    :+:   */
+/*   sort.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/19 18:34:34 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/19 18:35:23 by ssuchane         ###   ########.fr       */
+/*   Created: 2024/06/21 17:15:55 by eaktimur          #+#    #+#             */
+/*   Updated: 2024/06/24 16:15:44 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-t_l	*find_highest(t_l *stack)
+int	is_sorted(t_l *a)
 {
-	long	highest;
-	t_l		*highest_node;
-	t_l		*current;
+	t_l	*current;
 
-	current = stack;
+	if (!a)
+		return (1);
+	current = a;
+	while (current && current->index != 0)
+		current = current->next;
 	if (!current)
-		return (NULL);
-	highest = LONG_MIN;
-	while (current)
+		return (1);
+	while (current->next)
 	{
-		if (current->nbr > highest)
-		{
-			highest = current->nbr;
-			highest_node = current;
-		}
+		if (current->nbr > current->next->nbr)
+			return (0);
 		current = current->next;
 	}
-	return (highest_node);
+	return (1);
 }
 
 void	two_elem_sort(t_l *a)
@@ -48,6 +46,7 @@ void	two_elem_sort(t_l *a)
 		if (first->nbr > second->nbr)
 			s(&a, 'a');
 	}
+	update_indexes(&a, NULL);
 }
 
 void	three_elem_sort(t_l **a)
@@ -63,3 +62,5 @@ void	three_elem_sort(t_l **a)
 		s(a, 'a');
 	// 	exit_free_list(a);
 }
+
+

@@ -1,49 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_stack.c                                      :+:      :+:    :+:   */
+/*   stuff.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/19 18:20:46 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/19 18:26:30 by ssuchane         ###   ########.fr       */
+/*   Created: 2024/06/21 17:15:09 by eaktimur          #+#    #+#             */
+/*   Updated: 2024/06/24 16:15:54 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-t_l	*find_last_node(t_l *a)
+void	handle_input(char **argv, int argc, t_l **a)
 {
-	t_l	*node;
+	int	i;
+	int	j;
 
-	if (!a)
-		return (NULL);
-	node = a;
-	while (node->next)
-		node = node->next;
-	return (node);
-}
-
-void	populate_a(t_l **a, int n)
-{
-	t_l	*node;
-	t_l	*last_node;
-
-	node = malloc(sizeof(t_l));
-	if (!node)
-		exit_error();
-	node->nbr = n;
-	node->next = NULL;
-	if (!*a)
+	i = 1;
+	while (i < argc)
 	{
-		*a = node;
-		node->prev = NULL;
-	}
-	else
-	{
-		last_node = find_last_node(*a);
-		last_node->next = node;
-		node->prev = last_node;
+		j = 0;
+		while (argv[i][j])
+		{
+			if (!is_num(argv[i][j]) && !is_sign(argv[i][j]))
+				exit_error();
+			j++;
+		}
+		if (check_doubles(*a, ft_atoi(argv[i])))
+			exit_error();
+		populate_a(a, ft_atoi(argv[i]));
+		i++;
 	}
 }
 
@@ -68,22 +55,25 @@ int	stack_size(t_l *a)
 	return (count);
 }
 
-int	is_sorted(t_l *a)
+t_l	*find_highest(t_l *head)
 {
-	t_l	*current;
+	long	highest;
+	t_l		*highest_node;
+	t_l		*current;
 
-	if (!a)
-		return (1);
-	current = a;
-	while (current && current->index != 0)
-		current = current->next;
+	current = head;
 	if (!current)
-		return (1);
-	while (current->next)
+		return (NULL);
+	highest = LONG_MIN;
+	while (current)
 	{
-		if (current->nbr > current->next->nbr)
-			return (0);
+		if (current->nbr > highest)
+		{
+			highest = current->nbr;
+			highest_node = current;
+		}
 		current = current->next;
 	}
-	return (1);
+	return (highest_node);
 }
+

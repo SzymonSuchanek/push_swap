@@ -1,16 +1,51 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_string.c                                     :+:      :+:    :+:   */
+/*   setup.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/19 18:25:21 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/19 18:26:33 by ssuchane         ###   ########.fr       */
+/*   Created: 2024/06/21 16:59:46 by eaktimur          #+#    #+#             */
+/*   Updated: 2024/06/24 16:33:31 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
+
+t_l	*find_last_node(t_l *a)
+{
+	t_l	*node;
+
+	if (!a)
+		return (NULL);
+	node = a;
+	while (node->next)
+		node = node->next;
+	return (node);
+}
+
+void	populate_a(t_l **a, int n)
+{
+	t_l	*node;
+	t_l	*last_node;
+
+	node = malloc(sizeof(t_l));
+	if (!node)
+		exit_error();
+	node->nbr = n;
+	node->next = NULL;
+	if (!*a)
+	{
+		*a = node;
+		node->prev = NULL;
+	}
+	else
+	{
+		last_node = find_last_node(*a);
+		last_node->next = node;
+		node->prev = last_node;
+	}
+}
 
 int	ft_atoi(char *str)
 {
