@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 16:28:50 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/24 19:01:38 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/26 13:45:23 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	update_and_execute(t_l **a, t_l **b, t_l **to_push)
 {
 	update_indexes(a, b);
 	update_targets(a, b);
+	calculate_push_costs(a, b);
 	*to_push = find_cheapest_node(b);
 	update_median(a);
 	update_median(b);
@@ -33,22 +34,23 @@ void	actual_push_swap(t_l **a, t_l **b)
 		{
 			if (*a == find_highest(*a))
 				r(a, 'a');
+			if (stack_size(*a) > 5 && *a == find_second_highest(*a))
+				r(a, 'a');
 			push_b(a, b);
 		}
 		else
 		{
 			three_elem_sort(a);
 			while (stack_size(*b) > 0)
-			{
 				update_and_execute(a, b, &to_push);
-			}
 		}
 		if (stack_size(*b) == 0)
 			break ;
 	}
 	update_median(a);
 	update_indexes(a, b);
-	final_rotate(a);
+	if (!is_sorted(*a))
+		final_rotate(a);
 }
 
 void	sizebased_operation(t_l **a, t_l **b)
@@ -74,7 +76,7 @@ int	main(int argc, char **argv)
 		return (1);
 	if (argc == 2)
 		ft_split(argv, ' ', &a);
-	else if (argc > 2)
+	else if (argc >= 3)
 		handle_input(argv, argc, &a);
 	update_indexes(&a, &b);
 	sizebased_operation(&a, &b);

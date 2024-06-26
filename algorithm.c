@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 16:11:38 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/24 18:58:21 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/26 13:56:14 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ t_l	*find_cheapest_node(t_l **b_node)
 	return (cheapest);
 }
 
-void	execute_operations1(t_l **a, t_l **b, t_l *to_push, t_l *target)
+void	continue_operations(t_l **a, t_l **b, t_l *to_push, t_l *target)
 {
 	while (to_push->index > 0)
 	{
@@ -90,7 +90,7 @@ void	execute_operations(t_l **a, t_l **b, t_l *to_push)
 		else
 			break ;
 	}
-	execute_operations1(a, b, to_push, target);
+	continue_operations(a, b, to_push, target);
 }
 
 void	final_rotate(t_l **a)

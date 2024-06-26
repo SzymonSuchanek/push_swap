@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 16:07:28 by eaktimur          #+#    #+#             */
-/*   Updated: 2024/06/24 19:20:33 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/06/26 13:36:18 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,17 @@ void				free_list(t_l *list);
 
 // ft_split
 int					check_doubles(t_l *a, int n);
+void				populate1(int *num_and_flags, t_l **a_list);
+void				populate_split(char *str, char c, int *num_and_flags,
+						t_l **a_list);
+
 void				ft_split(char **argv, char c, t_l **a);
 
 //	handle_input
 void				handle_input(char **argv, int argc, t_l **a);
 int					stack_size(t_l *a);
 t_l					*find_highest(t_l *head);
+t_l					*find_second_highest(t_l *head);
 
 // push_swap
 void				update_and_execute(t_l **a, t_l **b, t_l **to_push);
