@@ -6,36 +6,11 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 16:11:38 by ssuchane          #+#    #+#             */
-/*   Updated: 2024/06/26 13:56:14 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/08/02 19:00:58 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
-
-void	calculate_push_costs(t_l **a_node, t_l **b_node)
-{
-	t_l	*b;
-	t_l	*a;
-	int	temp;
-
-	b = *b_node;
-	while (b != NULL)
-	{
-		a = b->target_node;
-		b->push_cost = 0;
-		temp = a->index + b->index;
-		if (b->index + (stack_size(*a_node) - a->index) < temp)
-			temp = b->index + (stack_size(*a_node) - a->index);
-		if (a->index + (stack_size(*b_node) - b->index) < temp)
-			temp = a->index + (stack_size(*b_node) - b->index);
-		if ((stack_size(*a_node) - a->index) + (stack_size(*b_node)
-				- b->index) < temp)
-			temp = (stack_size(*a_node) - a->index) + (stack_size(*b_node)
-					- b->index);
-		b->push_cost = temp;
-		b = b->next;
-	}
-}
 
 t_l	*find_cheapest_node(t_l **b_node)
 {

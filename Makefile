@@ -6,7 +6,7 @@
 #    By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/24 16:11:52 by ssuchane          #+#    #+#              #
-#    Updated: 2024/06/24 18:35:00 by ssuchane         ###   ########.fr        #
+#    Updated: 2024/08/02 19:04:32 by ssuchane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ SRCS =	algorithm.c \
     	handle_input.c \
     	op_rotate.c \
     	op_swap_push.c \
+		push_cost.c	\
 		push_swap.c \
     	setup.c \
 		sort.c \

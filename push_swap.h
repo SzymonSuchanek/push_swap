@@ -6,7 +6,7 @@
 /*   By: ssuchane <ssuchane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 16:07:28 by eaktimur          #+#    #+#             */
-/*   Updated: 2024/06/26 13:36:18 by ssuchane         ###   ########.fr       */
+/*   Updated: 2024/08/02 19:07:49 by ssuchane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void				s(t_l **stack, char which);
 void				ss(t_l **a, t_l **b);
 
 // algorithm
-void				calculate_push_costs(t_l **a_node, t_l **b_node);
 t_l					*find_cheapest_node(t_l **b_node);
 void				execute_operations1(t_l **a, t_l **b, t_l *to_push,
 						t_l *target);
@@ -68,6 +67,11 @@ void				handle_input(char **argv, int argc, t_l **a);
 int					stack_size(t_l *a);
 t_l					*find_highest(t_l *head);
 t_l					*find_second_highest(t_l *head);
+
+//	push_cost
+int					calculate_temp_cost(t_l *a, t_l *b, t_l **a_node,
+						t_l **b_node);
+void				calculate_push_costs(t_l **a_node, t_l **b_node);
 
 // push_swap
 void				update_and_execute(t_l **a, t_l **b, t_l **to_push);
